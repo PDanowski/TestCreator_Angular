@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,6 +36,13 @@ namespace TestCreatorWebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                //#if DEBUG
+                //app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                //{
+                //    HotModuleReplacement = true
+                //});
+                //#endif
             }
             else
             {
@@ -44,7 +52,17 @@ namespace TestCreatorWebApp
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
+            //disable cache for static files
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context =>
+                    {
+                        context.Context.Response.Headers["Cache-Control"] = Configuration["StaticFiles:Headers:Cache-Control"];
+                        context.Context.Response.Headers["Pragma"] = Configuration["StaticFiles:Headers:Pragma"];
+                        context.Context.Response.Headers["Expires"] = Configuration["StaticFiles:Headers:Expires"];
+                    })
+            });
             app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>
