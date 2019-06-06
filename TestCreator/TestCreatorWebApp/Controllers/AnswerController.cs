@@ -13,7 +13,11 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class AnswerController : Controller
     {
-        // GET: api/answer/all
+        /// <summary>
+        /// GET: api/answer/all
+        /// </summary>
+        /// <param name="questionId"></param>
+        /// <returns>All AnswerViewModel for given {questionId}</returns>
         [HttpGet("All/{questionId}")]
         public IActionResult All(int questionId)
         {
@@ -49,5 +53,45 @@ namespace TestCreatorWebApp.Controllers
                 });
         }
 
+        /// <summary>
+        /// GET: api/answer/get/{id}
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>AnswerViewModel with given {id}</returns>
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            return Content("Not implemented yet");
+        }
+
+        /// <summary>
+        /// PUT: api/answer/put
+        /// </summary>
+        /// <param name="viewModel">AnswerViewModel with data</param>
+        [HttpPut]
+        public IActionResult Put(AnswerViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// POST: api/answer/post
+        /// </summary>
+        /// <param name="viewModel">AnswerViewModel with data</param>
+        [HttpPost]
+        public IActionResult Post(AnswerViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// POST: api/answer/delete
+        /// </summary>
+        /// <param name="id">Identifier of AnswerViewModel</param>
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

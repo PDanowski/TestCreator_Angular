@@ -13,7 +13,52 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class ResultController : Controller
     {
-        // GET: api/result/all
+        /// <summary>
+        /// GET: api/result/get/{id}
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>ResultViewModel with given {id}</returns>
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            return Content("Not implemented yet");
+        }
+
+        /// <summary>
+        /// PUT: api/result/put
+        /// </summary>
+        /// <param name="viewModel">ResultViewModel with data</param>
+        [HttpPut]
+        public IActionResult Put(ResultViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// POST: api/result/post
+        /// </summary>
+        /// <param name="viewModel">ResultViewModel with data</param>
+        [HttpPost]
+        public IActionResult Post(ResultViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// POST: api/result/delete
+        /// </summary>
+        /// <param name="id">Identifier of ResultViewModel</param>
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// GET: api/result/all
+        /// </summary>
+        /// <param name="quizId"></param>
+        /// <returns>All ResultViewModel for given {quizId}</returns>
         [HttpGet("All/{quizId}")]
         public IActionResult All(int quizId)
         {

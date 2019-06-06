@@ -13,7 +13,65 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class TestController : Controller
     {
-        //GET api/test/latest
+        /// <summary>
+        /// GET: api/test/{}id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Single TestViewModel with given {id}</returns>
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var viewModel = new TestViewModel
+            {
+                Id = id,
+                Title = "Sample test",
+                Description = "Sample desciption",
+                CreationDate = DateTime.Now,
+                LastModificationDate = DateTime.Now
+            };
+
+            return new JsonResult(viewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
+        }
+
+        /// <summary>
+        /// PUT: api/test/put
+        /// </summary>
+        /// <param name="viewModel">TestViewModel with data</param>
+        [HttpPut]
+        public IActionResult Put(TestViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// POST: api/test/post
+        /// </summary>
+        /// <param name="viewModel">TestViewModel with data</param>
+        [HttpPost]
+        public IActionResult Post(TestViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// POST: api/test/delete
+        /// </summary>
+        /// <param name="id">Identifier of TestViewModel</param>
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        /// <summary>
+        /// GET api/test/latest
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns>{num} latest TestViewModel</returns>
         [HttpGet("Latest/{num?}")]
         public IActionResult Latest(int num = 10)
         {
@@ -48,26 +106,35 @@ namespace TestCreatorWebApp.Controllers
             });
         }
 
-        //GET: api/quiz/ByTitle
+        /// <summary>
+        /// GET: api/quiz/ByTitle
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns>{num} TestViewModels order by title</returns>
         [HttpGet("ByTitle/{num:int?}")]
         public IActionResult ByTitle(int num = 10)
         {
             var sampleTests = ((JsonResult) Latest(num)).Value as List<TestViewModel>;
 
-            return new JsonResult(sampleTests.OrderBy(t => t.Title),
+            return new JsonResult(sampleTests?.OrderBy(t => t.Title),
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented
                 });
         }
 
-        //GET: api/quiz/Random
+
+        /// <summary>
+        /// GET: api/quiz/Random
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns>{num} random TestViewModels</returns>
         [HttpGet("Random/{num:int?}")]
         public IActionResult Random(int num = 10)
         {
             var sampleTests = ((JsonResult)Latest(num)).Value as List<TestViewModel>;
 
-            return new JsonResult(sampleTests.OrderBy(t => Guid.NewGuid()),
+            return new JsonResult(sampleTests?.OrderBy(t => Guid.NewGuid()),
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented
