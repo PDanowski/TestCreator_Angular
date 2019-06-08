@@ -14,7 +14,7 @@ namespace TestCreatorWebApp.Controllers
     public class TestController : Controller
     {
         /// <summary>
-        /// GET: api/test/{}id
+        /// GET: api/test/{id}
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Single TestViewModel with given {id}</returns>
@@ -72,7 +72,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="num"></param>
         /// <returns>{num} latest TestViewModel</returns>
-        [HttpGet("Latest/{num?}")]
+        [HttpGet("Latest/{num:int?}")]
         public IActionResult Latest(int num = 10)
         {
             var sampleTests = new List<TestViewModel>

@@ -1,0 +1,9 @@
+<h2>{{title}}</h2>
+<ul class="testlist">
+  <li *ngFor="let test of tests"
+      [class.selected]="test === selectedTest"
+      (click)="onSelect(test)">
+    <span>{{test.Title}}</span>
+  </li>
+</ul>
+<test *ngIf="selectedTest" [test]="selectedTest"></test>
