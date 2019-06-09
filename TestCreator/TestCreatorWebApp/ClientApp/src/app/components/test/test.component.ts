@@ -1,4 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Inject } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "test",
@@ -7,5 +9,27 @@ import { Component, Input } from "@angular/core";
 })
 
 export class TestComponent {
-  @Input("test") test: Test
+  test: Test;
+  
+  constructor(private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    @Inject('BASE_URL') private baseUrl: string) {
+
+    this.test = <Test>{};
+
+    var id = +this.activatedRoute.snapshot.params["id"];
+    console.log(id);
+
+    if (id) {
+      var url = this.baseUrl + "api/test/" + id;
+      this.http.get<Test>(url).subscribe(result => {
+          this.test = result;
+        },
+        error => console.error(error));
+    } else {
+      console.log("Invalid ID - redirecting to home...");
+      this.router.navigate(["home"]);
+    }
+  }
 }
