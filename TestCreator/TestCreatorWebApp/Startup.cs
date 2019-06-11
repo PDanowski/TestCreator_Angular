@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.Data;
+using TestCreatorWebApp.Implementations;
 
 namespace TestCreatorWebApp
 {
@@ -37,6 +39,9 @@ namespace TestCreatorWebApp
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            //register dependencies
+            services.Add(new ServiceDescriptor(typeof(IRepository), typeof(Repository), ServiceLifetime.Scoped));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,6 +102,15 @@ namespace TestCreatorWebApp
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+                context.Database.Migrate();
+
+                DbSeeder.Seed(context);
+            }
         }
     }
 }

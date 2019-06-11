@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,6 +14,13 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class TestController : Controller
     {
+        private IRepository _repository;
+
+        public TestController(IRepository repository)
+        {
+            this._repository = repository;
+        }
+
         /// <summary>
         /// GET: api/test/{id}
         /// </summary>
@@ -21,14 +29,7 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var viewModel = new TestViewModel
-            {
-                Id = id,
-                Title = "Sample test",
-                Description = "Sample desciption",
-                CreationDate = DateTime.Now,
-                LastModificationDate = DateTime.Now
-            };
+            var viewModel = _repository.GetTest(id);
 
             return new JsonResult(viewModel, new JsonSerializerSettings
             {
@@ -75,32 +76,9 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("Latest/{num:int?}")]
         public IActionResult Latest(int num = 10)
         {
-            var sampleTests = new List<TestViewModel>
-            {
-                new TestViewModel
-                {
-                    Id = 1,
-                    Title = "Sample test",
-                    Description = "Sample desciption",
-                    CreationDate = DateTime.Now,
-                    LastModificationDate = DateTime.Now
-                }
-            };
+            var latestTests = _repository.GetLatestTests(num);
 
-
-            for (int i = 2; i <= num; i++)
-            {
-                sampleTests.Add(new TestViewModel
-                {
-                    Id = i,
-                    Title = "Sample test" + i,
-                    Description = "Sample desciption" + i,
-                    CreationDate = DateTime.Now,
-                    LastModificationDate = DateTime.Now
-                });
-            }
-
-            return new JsonResult(sampleTests, new JsonSerializerSettings
+            return new JsonResult(latestTests, new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented
             });
@@ -114,9 +92,9 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("ByTitle/{num:int?}")]
         public IActionResult ByTitle(int num = 10)
         {
-            var sampleTests = ((JsonResult) Latest(num)).Value as List<TestViewModel>;
+            var tests = _repository.GetTestsByTitle(num);
 
-            return new JsonResult(sampleTests?.OrderBy(t => t.Title),
+            return new JsonResult(tests,
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented
@@ -132,7 +110,7 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("Random/{num:int?}")]
         public IActionResult Random(int num = 10)
         {
-            var sampleTests = ((JsonResult)Latest(num)).Value as List<TestViewModel>;
+            var sampleTests = _repository.GetRandomTests(num);
 
             return new JsonResult(sampleTests?.OrderBy(t => Guid.NewGuid()),
                 new JsonSerializerSettings

@@ -23,7 +23,7 @@ namespace TestCreatorWebApp.Data.Models
         [Required]
         public string Text { get; set; }
         [Required]
-        public string Value { get; set; }
+        public int Value { get; set; }
         [DefaultValue(0)]
         public int Type { get; set; }
         [DefaultValue(0)]
