@@ -38,6 +38,7 @@
     <None Remove="ClientApp\src\app\components\login\login.component.ts" />
     <None Remove="ClientApp\src\app\components\pagenotfound\pagenotfound.component.ts" />
     <None Remove="ClientApp\src\app\components\test-list.component.ts" />
+    <None Remove="ClientApp\src\app\components\test\test-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test.component.ts" />
     <None Remove="ClientApp\src\app\interfaces\Test.ts" />  
   </ItemGroup>
@@ -46,6 +47,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\about\about.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\login\login.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\pagenotfound\pagenotfound.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\test\test-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\Test.ts" />

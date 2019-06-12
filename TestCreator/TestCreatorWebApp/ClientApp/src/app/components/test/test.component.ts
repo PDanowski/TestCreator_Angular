@@ -32,4 +32,22 @@ export class TestComponent {
       this.router.navigate(["home"]);
     }
   }
+
+  onEdit() {
+    this.router.navigate(["test/edit", this.test.Id]);
+  }
+
+  onDelete() {
+
+    if (confirm("Are you sure to remove this test ?")) {
+      var url = this.baseUrl + "api/test/" + this.test.Id;
+
+      this.http.delete(url).subscribe(result => {
+          console.log("Test with ID: " + this.test.Id + " was removed.");
+          this.router.navigate(["home"]);
+        },
+        error => console.error(error));
+    }
+  }
+
 }

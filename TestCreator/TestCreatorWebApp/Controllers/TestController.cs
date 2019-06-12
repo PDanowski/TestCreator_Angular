@@ -31,6 +31,14 @@ namespace TestCreatorWebApp.Controllers
         {
             var viewModel = _repository.GetTest(id);
 
+            if (viewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Test with identifier {id} was not found"
+                });
+            }
+
             return new JsonResult(viewModel, new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented
@@ -42,9 +50,18 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
         [HttpPut]
-        public IActionResult Put(TestViewModel viewModel)
+        public IActionResult Put([FromBody]TestViewModel viewModel)
         {
-            throw new NotImplementedException();
+            if (viewModel == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            var createdViewModel = _repository.CreateTest(viewModel);
+            return new JsonResult(createdViewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
@@ -52,19 +69,42 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
         [HttpPost]
-        public IActionResult Post(TestViewModel viewModel)
+        public IActionResult Post([FromBody]TestViewModel viewModel)
         {
-            throw new NotImplementedException();
+            if (viewModel == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            var updatedViewModel = _repository.UpdateTest(viewModel);
+            if (updatedViewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during updating test with identifier {viewModel.Id}"
+                });
+            }
+            return new JsonResult(updatedViewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
         /// POST: api/test/delete
         /// </summary>
         /// <param name="id">Identifier of TestViewModel</param>
-        [HttpPost]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            throw new NotImplementedException();
+            if (_repository.DeleteTest(id))
+            {
+                return new NoContentResult();
+            }
+            return NotFound(new
+            {
+                Error = $"Error during deletion test with identifier {id}"
+            });
         }
 
 
