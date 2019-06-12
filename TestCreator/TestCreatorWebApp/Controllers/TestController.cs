@@ -14,9 +14,9 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class TestController : Controller
     {
-        private IRepository _repository;
+        private readonly ITestRepository _repository;
 
-        public TestController(IRepository repository)
+        public TestController(ITestRepository repository)
         {
             this._repository = repository;
         }
@@ -91,7 +91,7 @@ namespace TestCreatorWebApp.Controllers
         }
 
         /// <summary>
-        /// POST: api/test/delete
+        /// DELETE: api/test/delete
         /// </summary>
         /// <param name="id">Identifier of TestViewModel</param>
         [HttpDelete("{id}")]

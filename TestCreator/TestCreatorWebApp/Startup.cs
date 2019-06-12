@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.Data;
-using TestCreatorWebApp.Implementations;
+using TestCreatorWebApp.Repositories;
 
 namespace TestCreatorWebApp
 {
@@ -41,7 +41,10 @@ namespace TestCreatorWebApp
             });
 
             //register dependencies
-            services.Add(new ServiceDescriptor(typeof(IRepository), typeof(Repository), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ITestRepository), typeof(TestRepository), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(IResultRepository), typeof(ResultRepository), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(IQuestionRepository), typeof(QuestionRepository), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(IAnswerRepository), typeof(AnswerRepository), ServiceLifetime.Scoped));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

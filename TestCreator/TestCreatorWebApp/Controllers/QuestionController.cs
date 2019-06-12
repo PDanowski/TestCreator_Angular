@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,6 +14,13 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class QuestionController : Controller
     {
+        private readonly IQuestionRepository _repository;
+
+        public QuestionController(IQuestionRepository repository)
+        {
+            this._repository = repository;
+        }
+
         /// <summary>
         /// GET: api/question/get/{id}
         /// </summary>
@@ -21,7 +29,20 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Content("Not implemented yet");
+            var viewModel = _repository.GetQuestion(id);
+
+            if (viewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Question with identifier {id} was not found"
+                });
+            }
+
+            return new JsonResult(viewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
@@ -31,7 +52,16 @@ namespace TestCreatorWebApp.Controllers
         [HttpPut]
         public IActionResult Put(QuestionViewModel viewModel)
         {
-            throw new NotImplementedException();
+            if (viewModel == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            var createdViewModel = _repository.CreateQuestion(viewModel);
+            return new JsonResult(createdViewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
@@ -41,53 +71,61 @@ namespace TestCreatorWebApp.Controllers
         [HttpPost]
         public IActionResult Post(QuestionViewModel viewModel)
         {
-            throw new NotImplementedException();
+            if (viewModel == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            var updatedViewModel = _repository.UpdateQuestion(viewModel);
+            if (updatedViewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during updating question with identifier {viewModel.Id}"
+                });
+            }
+            return new JsonResult(updatedViewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
-        /// POST: api/question/delete
+        /// DELETE: api/question/delete
         /// </summary>
         /// <param name="id">Identifier of QuestionViewModel</param>
-        [HttpPost]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            throw new NotImplementedException();
+            if (_repository.DeleteQuestion(id))
+            {
+                return new NoContentResult();
+            }
+            return NotFound(new
+            {
+                Error = $"Error during deletion question with identifier {id}"
+            });
         }
 
         /// <summary>
         /// GET: api/question/all
         /// </summary>
-        /// <param name="quizId"></param>
+        /// <param name="testId"></param>
         /// <returns>All QuestionViewModel for given {quizId}</returns>
-        [HttpGet("All/{quizId}")]
-        public IActionResult All(int quizId)
+        [HttpGet("All/{testId}")]
+        public IActionResult All(int testId)
         {
-            var sampleQuestions = new List<QuestionViewModel>
-            {
-                new QuestionViewModel
-                {
-                    Id = 1,
-                    QuizId = quizId,
-                    Text = "Test question",
-                    CreationDate = DateTime.Now,
-                    LastModificationDate = DateTime.Now
-                }
+            var viewModels = _repository.GetQuestions(testId);
 
-            };
-
-            for (int i = 2; i <= 5; i++)
+            if (viewModels == null)
             {
-                sampleQuestions.Add(new QuestionViewModel
+                return NotFound(new
                 {
-                    Id = i,
-                    Text = "Sample question" + i,
-                    QuizId = quizId,
-                    CreationDate = DateTime.Now,
-                    LastModificationDate = DateTime.Now
+                    Error = $"Questions for test with identifier {testId} were not found"
                 });
             }
 
-            return new JsonResult(sampleQuestions,
+            return new JsonResult(viewModels,
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented

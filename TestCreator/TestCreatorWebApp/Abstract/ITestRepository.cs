@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using TestCreatorWebApp.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TestCreatorWebApp.ViewModels;
 
 namespace TestCreatorWebApp.Abstract
 {
-    public interface IRepository
+    public interface ITestRepository
     {
         TestViewModel GetTest(int id);
         List<TestViewModel> GetLatestTests(int number);

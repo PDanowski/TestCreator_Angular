@@ -8,13 +8,13 @@ using TestCreatorWebApp.Data;
 using TestCreatorWebApp.Data.Models;
 using TestCreatorWebApp.ViewModels;
 
-namespace TestCreatorWebApp.Implementations
+namespace TestCreatorWebApp.Repositories
 {
-    public class Repository : IRepository
+    public class TestRepository : ITestRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public Repository(ApplicationDbContext context)
+        public TestRepository(ApplicationDbContext context)
         {
             this._context = context;
         }
@@ -29,7 +29,7 @@ namespace TestCreatorWebApp.Implementations
         {
             var latest = _context.Tests.OrderByDescending(t => t.CreationDate)
                 .Take(number)
-                .ToArray();
+                .ToList();
             return latest.Adapt<List<TestViewModel>>();
         }
 
@@ -37,7 +37,7 @@ namespace TestCreatorWebApp.Implementations
         {
             var latest = _context.Tests.OrderBy(t => t.Title)
                 .Take(number)
-                .ToArray();
+                .ToList();
             return latest.Adapt<List<TestViewModel>>();
         }
 
@@ -45,7 +45,7 @@ namespace TestCreatorWebApp.Implementations
         {
             var random = _context.Tests.OrderBy(t => Guid.NewGuid())
                 .Take(number)
-                .ToArray();
+                .ToList();
             return random.Adapt<List<TestViewModel>>();
         }
 
@@ -54,6 +54,7 @@ namespace TestCreatorWebApp.Implementations
             var test = viewModel.Adapt<Test>();
 
             test.CreationDate = DateTime.Now;
+            test.LastModificationDate = DateTime.Now;
             test.UserId = _context.Users.FirstOrDefault(u => u.UserName.Equals("Admin"))?.Id;
 
             _context.Tests.Add(test);
@@ -76,7 +77,7 @@ namespace TestCreatorWebApp.Implementations
             test.Text = viewModel.Text;
             test.Notes = viewModel.Notes;
 
-            test.LastModificationDate =  DateTime.Now;
+            test.LastModificationDate = DateTime.Now;
 
             _context.SaveChanges();
 
@@ -93,7 +94,7 @@ namespace TestCreatorWebApp.Implementations
             }
 
             _context.Tests.Remove(test);
-            return _context .SaveChanges() > 0;
+            return _context.SaveChanges() > 0;
         }
     }
 }

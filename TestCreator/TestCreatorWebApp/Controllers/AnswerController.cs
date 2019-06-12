@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,6 +14,13 @@ namespace TestCreatorWebApp.Controllers
     [Route("api/[controller]")]
     public class AnswerController : Controller
     {
+        private readonly IAnswerRepository _repository;
+
+        public AnswerController(IAnswerRepository repository)
+        {
+            this._repository = repository;
+        }
+
         /// <summary>
         /// GET: api/answer/all
         /// </summary>
@@ -21,32 +29,17 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("All/{questionId}")]
         public IActionResult All(int questionId)
         {
-            var sampleQuestions = new List<AnswerViewModel>
-            {
-                new AnswerViewModel
-                {
-                    Id = 1,
-                    QuestionId = questionId,
-                    Text = "Test answer",
-                    CreationDate = DateTime.Now,
-                    LastModificationDate = DateTime.Now
-                }
+            var viewModels = _repository.GetAnswers(questionId);
 
-            };
-
-            for (int i = 2; i <= 5; i++)
+            if (viewModels == null)
             {
-                sampleQuestions.Add(new AnswerViewModel
+                return NotFound(new
                 {
-                    Id = i,
-                    Text = "Sample answer" + i,
-                    QuestionId = questionId,
-                    CreationDate = DateTime.Now,
-                    LastModificationDate = DateTime.Now
+                    Error = $"Answers for question with identifier {questionId} were not found"
                 });
             }
 
-            return new JsonResult(sampleQuestions,
+            return new JsonResult(viewModels,
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented
@@ -61,7 +54,20 @@ namespace TestCreatorWebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Content("Not implemented yet");
+            var viewModel = _repository.GetAnswer(id);
+
+            if (viewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Answer with identifier {id} was not found"
+                });
+            }
+
+            return new JsonResult(viewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
@@ -71,7 +77,16 @@ namespace TestCreatorWebApp.Controllers
         [HttpPut]
         public IActionResult Put(AnswerViewModel viewModel)
         {
-            throw new NotImplementedException();
+            if (viewModel == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            var createdViewModel = _repository.CreateAnswer(viewModel);
+            return new JsonResult(createdViewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
@@ -81,17 +96,40 @@ namespace TestCreatorWebApp.Controllers
         [HttpPost]
         public IActionResult Post(AnswerViewModel viewModel)
         {
-            throw new NotImplementedException();
+            if (viewModel == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            var updatedViewModel = _repository.UpdateAnswer(viewModel);
+            if (updatedViewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during updating answer with identifier {viewModel.Id}"
+                });
+            }
+            return new JsonResult(updatedViewModel, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
         }
 
         /// <summary>
-        /// POST: api/answer/delete
+        /// DELETE: api/answer/delete
         /// </summary>
         /// <param name="id">Identifier of AnswerViewModel</param>
-        [HttpPost]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            throw new NotImplementedException();
+            if (_repository.DeleteAnswer(id))
+            {
+                return new NoContentResult();
+            }
+            return NotFound(new
+            {
+                Error = $"Error during deletion answer with identifier {id}"
+            });
         }
     }
 }
