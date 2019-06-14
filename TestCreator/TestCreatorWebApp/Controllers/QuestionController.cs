@@ -11,8 +11,7 @@ using TestCreatorWebApp.ViewModels;
 
 namespace TestCreatorWebApp.Controllers
 {
-    [Route("api/[controller]")]
-    public class QuestionController : Controller
+    public class QuestionController : BaseApiController
     {
         private readonly IQuestionRepository _repository;
 
@@ -39,10 +38,7 @@ namespace TestCreatorWebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModel, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(viewModel, JsonSettings);
         }
 
         /// <summary>
@@ -58,10 +54,7 @@ namespace TestCreatorWebApp.Controllers
             }
 
             var createdViewModel = _repository.CreateQuestion(viewModel);
-            return new JsonResult(createdViewModel, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(createdViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -84,10 +77,7 @@ namespace TestCreatorWebApp.Controllers
                     Error = $"Error during updating question with identifier {viewModel.Id}"
                 });
             }
-            return new JsonResult(updatedViewModel, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(updatedViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -125,11 +115,7 @@ namespace TestCreatorWebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModels,
-                new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented
-                });
+            return new JsonResult(viewModels, JsonSettings);
         }
 
     }

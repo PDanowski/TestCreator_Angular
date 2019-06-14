@@ -11,8 +11,7 @@ using TestCreatorWebApp.ViewModels;
 
 namespace TestCreatorWebApp.Controllers
 {
-    [Route("api/[controller]")]
-    public class TestController : Controller
+    public class TestController : BaseApiController
     {
         private readonly ITestRepository _repository;
 
@@ -39,10 +38,7 @@ namespace TestCreatorWebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModel, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(viewModel, JsonSettings);
         }
 
         /// <summary>
@@ -58,10 +54,7 @@ namespace TestCreatorWebApp.Controllers
             }
 
             var createdViewModel = _repository.CreateTest(viewModel);
-            return new JsonResult(createdViewModel, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(createdViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -84,10 +77,7 @@ namespace TestCreatorWebApp.Controllers
                     Error = $"Error during updating test with identifier {viewModel.Id}"
                 });
             }
-            return new JsonResult(updatedViewModel, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(updatedViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -118,10 +108,7 @@ namespace TestCreatorWebApp.Controllers
         {
             var latestTests = _repository.GetLatestTests(num);
 
-            return new JsonResult(latestTests, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(latestTests, JsonSettings);
         }
 
         /// <summary>
@@ -134,11 +121,7 @@ namespace TestCreatorWebApp.Controllers
         {
             var tests = _repository.GetTestsByTitle(num);
 
-            return new JsonResult(tests,
-                new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented
-                });
+            return new JsonResult(tests, JsonSettings);
         }
 
 
@@ -152,11 +135,7 @@ namespace TestCreatorWebApp.Controllers
         {
             var sampleTests = _repository.GetRandomTests(num);
 
-            return new JsonResult(sampleTests?.OrderBy(t => Guid.NewGuid()),
-                new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented
-                });
+            return new JsonResult(sampleTests?.OrderBy(t => Guid.NewGuid()), JsonSettings);
         }
     }
 }
