@@ -9,7 +9,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let question of questions">
-      <td>{{question.text}}</td>
+      <td>{{question.Text}}</td>
       <td>
         <input type="button" value="Edit" (click)="onEdit(question)"/>
         <input type="button" value="Remove" (click)="onDelete(question)"/>
@@ -21,4 +21,4 @@
 <div *ngIf="questions.length == 0">
   This test doesn't have any questions yet. Use <strong>Add question</strong> to create one !
 </div>
-<input type="button" value="Add question" (click)="onCrete()"/>
+<input type="button" value="Add question" (click)="onCreate()"/>

@@ -10,6 +10,10 @@ import { HomeComponent } from './components/home/home.component';
 import { TestListComponent } from './components/test/test-list.component';
 import { TestComponent } from './components/test/test.component';
 import { TestEditComponent } from './components/test/test-edit.component';
+import { QuestionListComponent } from './components/question/question-list.component';
+import { QuestionEditComponent } from './components/question/question-edit.component';
+import { AnswerListComponent } from './components/answer/answer-list.component';
+import { AnswerEditComponent } from './components/answer/answer-edit.component';
 import { AboutComponent } from './components/about/about.component';
 import { LoginComponent } from './components/login/login.component';
 import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.component';
@@ -22,6 +26,10 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
     TestListComponent,
     TestComponent,
     TestEditComponent,
+    QuestionListComponent,
+    QuestionEditComponent,
+    AnswerListComponent,
+    AnswerEditComponent,
     AboutComponent,
     LoginComponent,
     PageNotFoundComponent
@@ -36,6 +44,10 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: 'test/create', component: TestEditComponent },
       { path: 'test/:id', component: TestComponent },
       { path: 'test/edit/:id', component: TestEditComponent },
+      { path: 'question/edit/:id', component: QuestionEditComponent },
+      { path: 'question/create/:id', component: QuestionEditComponent },
+      { path: 'answer/edit/:id', component: AnswerEditComponent },
+      { path: 'answer/create/:id', component: AnswerEditComponent },
       { path: 'about', component: AboutComponent },
       { path: 'login', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent},

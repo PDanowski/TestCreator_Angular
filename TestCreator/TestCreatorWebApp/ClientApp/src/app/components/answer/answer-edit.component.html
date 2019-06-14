@@ -1,0 +1,20 @@
+<h2>{{title}}</h2>
+<div class="answer-edit">
+  <div>
+    <label for="text">Text:</label>
+    <br />
+    <textarea id="text" [(ngModel)]="answer.Text" placeholder="Enter text of the answer here..."></textarea>
+  </div>
+  <div>
+    <label for="value">Value:</label>
+    <br />
+    <select id="value" name="value" [(ngModel)]="answer.Value">
+      <option *nnFor="let num of [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]" [value]="num">{{num}}</option>
+    </select>
+  </div>
+  <div>
+    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(answer)" />
+    <input *ngIf="!editMode" type="button" value="Create answer" (click)="onSubmit(answer)" />
+    <input type="button" value="Cancel" (click)="onBack()" />
+  </div>W
+</div>

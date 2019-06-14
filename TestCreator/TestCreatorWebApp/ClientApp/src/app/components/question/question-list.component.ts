@@ -54,7 +54,7 @@ export class QuestionListComponent {
 
   onDelete(question: Question) {
 
-    if (confirm("Are you to delete selected question ?")) {
+    if (confirm("Are you sure to delete selected question ?")) {
       var url = this.baseUrl + "api/question/" + question.Id;
 
       this.http.delete(url).subscribe(result => {
