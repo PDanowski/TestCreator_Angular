@@ -2,13 +2,13 @@
 <div class="question-edit">
   <div>
     <label for="text">Text:</label>
-    <br/>
+    <br />
     <textarea id="text" [(ngModel)]="question.Text" placeholder="Enter text of the question here..."></textarea>
   </div>
   <div>
-    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(question)"/>
-    <input *ngIf="!editMode" type="button" value="Create question" (click)="onSubmit(question)"/>
-    <input type="button" value="Cancel" (click)="onBack()"/>
+    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(question)" />
+    <input *ngIf="!editMode" type="button" value="Create question" (click)="onSubmit(question)" />
+    <input type="button" value="Cancel" (click)="onBack()" />
   </div>
 
   <answer-list *ngIf="editMode" [question]="question"></answer-list>

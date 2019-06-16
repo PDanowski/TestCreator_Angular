@@ -115,7 +115,7 @@ namespace TestCreatorWebApp.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     QuestionId = table.Column<int>(nullable: false),
                     Text = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: false),
+                    Value = table.Column<int>(nullable: false),
                     Type = table.Column<int>(nullable: false),
                     Flags = table.Column<int>(nullable: false),
                     Notes = table.Column<string>(nullable: true),

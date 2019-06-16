@@ -46,7 +46,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">ResultViewModel with data</param>
         [HttpPut]
-        public IActionResult Put(ResultViewModel viewModel)
+        public IActionResult Put([FromBody]ResultViewModel viewModel)
         {
             if (viewModel == null)
             {
@@ -62,7 +62,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">ResultViewModel with data</param>
         [HttpPost]
-        public IActionResult Post(ResultViewModel viewModel)
+        public IActionResult Post([FromBody]ResultViewModel viewModel)
         {
             if (viewModel == null)
             {

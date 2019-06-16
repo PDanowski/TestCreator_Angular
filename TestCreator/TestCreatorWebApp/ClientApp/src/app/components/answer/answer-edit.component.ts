@@ -49,19 +49,19 @@ export class AnswerEditComponent {
       this.http.post<Answer>(url, answer).subscribe(result => {
           var v = result;
         console.log("Answer " + v.Id + " was updated");
-        this.router.navigate(["test/edit", answer.QuestionId]);
+        this.router.navigate(["question/edit", answer.QuestionId]);
         },
         error => console.log(error));
     } else {
-      this.http.post<Answer>(url, answer).subscribe(result => {
+      this.http.put<Answer>(url, answer).subscribe(result => {
         var v = result;
         console.log("Answer " + v.Id + " was created");
-        this.router.navigate(["test/edit", answer.QuestionId]);
+        this.router.navigate(["question/edit", answer.QuestionId]);
       })
     }
   }
 
   onBack() {
-    this.router.navigate(["test/edit", this.answer.QuestionId]);
+    this.router.navigate(["question/edit", this.answer.QuestionId]);
   }
 }

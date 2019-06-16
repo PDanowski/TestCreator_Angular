@@ -53,7 +53,7 @@ export class QuestionEditComponent {
         },
         error => console.log(error));
     } else {
-      this.http.post<Question>(url, question).subscribe(result => {
+      this.http.put<Question>(url, question).subscribe(result => {
         var v = result;
         console.log("Question " + v.Id + " was created");
         this.router.navigate(["test/edit", question.TestId]);

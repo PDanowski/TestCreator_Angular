@@ -1,0 +1,30 @@
+<h3>Results</h3>
+<div *ngIf="results.length > 0">
+  <table class="results">
+    <thead>
+      <tr>
+        <th>Content</th>
+        <th>Min. value</th>
+        <th>Max. value</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of results">
+        <td>{{result.Text}}</td>
+        <td *ngIf="result.MinValue === null">unavailable</td>
+        <td *ngIf="result.MinValue !== null"> {{result.MinValue}}</td>
+        <td *ngIf="result.MaxValue === null">unavailable</td>
+        <td *ngIf="result.MaxValue !== null">{{result.MaxValue}}</td>
+        <td>
+          <input type="button" value="Edit" (click)="onEdit(result)" />
+          <input type="button" value="Remove" (click)="onDelete(result)" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="results.length == 0">
+  This test doesn't have any results yet. Use <strong>Add result</strong> to create one !
+</div>
+<input type="button" value="Add result" (click)="onCreate()" />

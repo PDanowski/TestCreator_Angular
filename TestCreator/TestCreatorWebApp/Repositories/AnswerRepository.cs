@@ -27,8 +27,11 @@ namespace TestCreatorWebApp.Repositories
 
         public List<AnswerViewModel> GetAnswers(int questionId)
         {
-            var answers = _context.Answers.Where(t => t.QuestionId == questionId).ToList();
-            return answers.Adapt<List<AnswerViewModel>>();
+            //var answers = _context.Answers.Where(t => t.QuestionId == questionId).ToList();
+            var answers1 = _context.Answers.ToList();
+            var answers2 = answers1.Where(t => t.QuestionId == questionId);
+
+            return answers2.Adapt<List<AnswerViewModel>>();
         }
 
         public AnswerViewModel CreateAnswer(AnswerViewModel viewModel)

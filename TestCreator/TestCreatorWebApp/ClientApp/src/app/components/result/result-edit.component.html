@@ -1,0 +1,26 @@
+<h2>{{title}}</h2>
+<div class="result-edit">
+  <div>
+    <label for="text">Text:</label>
+    <br />
+    <textarea id="text" [(ngModel)]="result.Text" placeholder="Enter text of the result here..."></textarea>
+  </div>
+
+  <div>
+    <label for="MinValue">Min. value:</label>
+    <br />
+    <input type="number" id="MinValue" name="MinValue" [(ngModel)]="result.MinValue"/>
+  </div>
+
+  <div>
+    <label for="MaxValue">Max. value:</label>
+    <br />
+    <input type="number" id="MaxValue" name="MaxValue" [(ngModel)]="result.MaxValue"/>
+  </div>
+
+  <div>
+    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(result)" />
+    <input *ngIf="!editMode" type="button" value="Create result" (click)="onSubmit(result)" />
+    <input type="button" value="Cancel" (click)="onBack()" />
+  </div>
+</div>

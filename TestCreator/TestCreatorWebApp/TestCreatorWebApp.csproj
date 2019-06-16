@@ -41,6 +41,8 @@
     <None Remove="ClientApp\src\app\components\pagenotfound\pagenotfound.component.ts" />
     <None Remove="ClientApp\src\app\components\question\question-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\question\question-list.component.ts" />
+    <None Remove="ClientApp\src\app\components\result\result-edit.component.ts" />
+    <None Remove="ClientApp\src\app\components\result\result-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test.component.ts" />
@@ -58,6 +60,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\pagenotfound\pagenotfound.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\question\question-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\question\question-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\result\result-edit.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\result\result-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test.component.ts" />
@@ -65,10 +69,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\question.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\result.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\src\app\components\result\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -2,23 +2,24 @@
 <div class="test-edit">
   <div>
     <label for="title">Title</label>
-    <br/>
-    <input type="text" id="Title" [(ngModel)]="test.Title" placeholder="Enter title here..."/>
+    <br />
+    <input type="text" id="Title" [(ngModel)]="test.Title" placeholder="Enter title here..." />
   </div>
   <div>
     <label for="description">Description</label>
-    <br/>
-    <input type="text" id="description" [(ngModel)]="test.Description" placeholder="Enter description here..."/>
+    <br />
+    <input type="text" id="description" [(ngModel)]="test.Description" placeholder="Enter description here..." />
   </div>
   <div>
     <label for="text">Additional information</label>
-    <br/>
-    <input type="text" id="text" [(ngModel)]="test.Text" placeholder="Enter text here..."/>
+    <br />
+    <input type="text" id="text" [(ngModel)]="test.Text" placeholder="Enter text here..." />
   </div>
   <div>
-    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(test)"/>
-    <input *ngIf="!editMode" type="button" value="Add test" (click)="onSubmit(test)"/>
-    <input type="button" value="Cancel" (click)="onBack()"/>
+    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(test)" />
+    <input *ngIf="!editMode" type="button" value="Add test" (click)="onSubmit(test)" />
+    <input type="button" value="Cancel" (click)="onBack()" />
   </div>
   <question-list [test]="test" *ngIf="editMode"></question-list>
+  <result-list [test]="test" *ngIf="editMode"></result-list>
 </div>
