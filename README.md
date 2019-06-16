@@ -6,7 +6,9 @@ Used languages, technologies and tools:
     ASP.NET Core 2.2
     C#
     EntityFramework Core 2.2
-    Moq
     Angular 6
-    Bootstrap 3
+    Bootstrap 4
+    Mapster
+    NUnit
+    Moq
 
