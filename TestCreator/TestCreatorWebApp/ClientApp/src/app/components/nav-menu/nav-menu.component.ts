@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { faPlus, faSignInAlt, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,6 +8,10 @@ import { Component } from '@angular/core';
 })
 export class NavMenuComponent {
   isExpanded = false;
+
+  faPlus = faPlus;
+  faSignInAlt = faSignInAlt;
+  faInfoCircle = faInfoCircle;
 
   collapse() {
     this.isExpanded = false;

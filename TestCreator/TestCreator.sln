@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCreatorWebApp", "TestCreatorWebApp\TestCreatorWebApp.csproj", "{94B33A41-EF7E-4A07-B67B-49B9BDDEDD25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCreatorWebApp.Tests", "TestCreatorWebApp.Tests\TestCreatorWebApp.Tests.csproj", "{B8C71738-278C-49E4-B24A-1F6CF1119C0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCreatorWebApp.Tests", "TestCreatorWebApp.Tests\TestCreatorWebApp.Tests.csproj", "{B8C71738-278C-49E4-B24A-1F6CF1119C0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +26,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		LessCompiler = 94b33a41-ef7e-4a07-b67b-49b9bddedd25
 		SolutionGuid = {701DC366-84B1-4FA8-BB30-959E6D7F21C1}
 	EndGlobalSection
 EndGlobal

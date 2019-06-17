@@ -13,23 +13,20 @@
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/about']">
-              <span class="glyphicon glyphicon-info-sign">
-                About
-              </span>
+              <fa-icon slot="start" [icon]="faInfoCircle"></fa-icon>
+              About
             </a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/login']">
-              <span class="glyphicon glyphicon-log-in">
-                Login
-              </span>
+              <fa-icon slot="start" [icon]="faSignInAlt"></fa-icon>
+              Login
             </a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/test/create']">
-              <span class="glyphicon glyphicon-plus">
-                Create test
-              </span>  
+              <fa-icon slot="start" [icon]="faPlus"></fa-icon>
+              Create test
             </a>
           </li>
         </ul>
