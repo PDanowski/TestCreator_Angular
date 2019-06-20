@@ -1,3 +1,23 @@
 .answer-edit {
-  min-width: 500px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 100px;
+  }
+
+  .commands {
+    margin-top: 20px;
+
+    .btn {
+      margin: 0px 3px 0px 3px;
+    }
+  }
+
+  select {
+    max-width: 200px;
+  }
 }

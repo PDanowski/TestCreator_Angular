@@ -1,26 +1,26 @@
 <h2>{{title}}</h2>
 <div class="result-edit">
-  <div>
+  <div class="form-group">
     <label for="text">Text:</label>
     <br />
-    <textarea id="text" [(ngModel)]="result.Text" placeholder="Enter text of the result here..."></textarea>
+    <textarea id="text" [(ngModel)]="result.Text" placeholder="Enter text of the result here..." class="form-control"></textarea>
   </div>
 
-  <div>
+  <div class="form-group">
     <label for="MinValue">Min. value:</label>
     <br />
-    <input type="number" id="MinValue" name="MinValue" [(ngModel)]="result.MinValue"/>
+    <input type="number" id="MinValue" name="MinValue" [(ngModel)]="result.MinValue" class="form-control"/>
   </div>
 
-  <div>
+  <div class="form-group">
     <label for="MaxValue">Max. value:</label>
     <br />
-    <input type="number" id="MaxValue" name="MaxValue" [(ngModel)]="result.MaxValue"/>
+    <input type="number" id="MaxValue" name="MaxValue" [(ngModel)]="result.MaxValue" class="form-control"/>
   </div>
 
-  <div>
-    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(result)" />
-    <input *ngIf="!editMode" type="button" value="Create result" (click)="onSubmit(result)" />
-    <input type="button" value="Cancel" (click)="onBack()" />
+  <div class="commands">
+    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(result)" class="btn btn-success" />
+    <input *ngIf="!editMode" type="button" value="Create result" (click)="onSubmit(result)" class="btn btn-success" />
+    <input type="button" value="Cancel" (click)="onBack()" class="btn btn-primary"/>
   </div>
 </div>

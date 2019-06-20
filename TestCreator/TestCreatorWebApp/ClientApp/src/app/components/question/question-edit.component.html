@@ -1,14 +1,14 @@
 <h2>{{title}}</h2>
 <div class="question-edit">
-  <div>
+  <div class="form-group">
     <label for="text">Text:</label>
     <br />
-    <textarea id="text" [(ngModel)]="question.Text" placeholder="Enter text of the question here..."></textarea>
+    <textarea id="text" [(ngModel)]="question.Text" placeholder="Enter text of the question here..." class="form-control"></textarea>
   </div>
-  <div>
-    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(question)" />
-    <input *ngIf="!editMode" type="button" value="Create question" (click)="onSubmit(question)" />
-    <input type="button" value="Cancel" (click)="onBack()" />
+  <div class="commands">
+    <input *ngIf="editMode" type="button" value="Save changes" (click)="onSubmit(question)" class="btn btn-success" />
+    <input *ngIf="!editMode" type="button" value="Create question" (click)="onSubmit(question)" class="btn btn-success"/>
+    <input type="button" value="Cancel" (click)="onBack()" class="btn btn-primary"/>
   </div>
 
   <answer-list *ngIf="editMode" [question]="question"></answer-list>

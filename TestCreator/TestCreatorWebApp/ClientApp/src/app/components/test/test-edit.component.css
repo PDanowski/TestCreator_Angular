@@ -1,4 +1,17 @@
-.test-edit input[type="text"],
+.test-edit {
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .test-edit {
+    width: 100%;
+  }
+}
 .test-edit textarea {
-  min-width: 500px;
+  min-height: 100px;
+}
+.test-edit .commands {
+  margin-top: 20px;
+}
+.test-edit .commands .btn {
+  margin: 0px 3px 0px 3px;
 }

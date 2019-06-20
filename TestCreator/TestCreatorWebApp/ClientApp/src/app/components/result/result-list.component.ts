@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: "result-list",
@@ -12,6 +13,10 @@ export class ResultListComponent {
   @Input() test: Test;
   results: Result[];
   title: string;
+
+  faPlus = faPlus;
+  faEdit = faEdit;
+  faTrash = faTrash;
 
   constructor(private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
