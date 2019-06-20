@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { faRandom, faFire, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: "test-list",
@@ -14,6 +15,10 @@ export class TestListComponent implements OnInit {
   title: string;
   selectedTest: Test;
   tests: Test[];
+
+  faRandom = faRandom;
+  faFire = faFire;
+  faSortAlphaDown = faSortAlphaDown;
 
   ngOnInit(): void {
 
@@ -57,5 +62,17 @@ export class TestListComponent implements OnInit {
     console.log("Selected test: " + this.selectedTest.Id);
 
     this.router.navigate(["test", this.selectedTest.Id]);
+  }
+
+  getIcon() {
+    switch (this.class) {
+    case "latest":
+    default:
+        return faFire;
+    case "random":
+        return faRandom;
+    case "byTitle":
+        return faSortAlphaDown;
+    }
   }
 }

@@ -45,6 +45,7 @@
     <None Remove="ClientApp\src\app\components\result\result-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-edit.component.ts" />
+    <None Remove="ClientApp\src\app\components\test\test-search.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test.component.ts" />
     <None Remove="ClientApp\src\app\interfaces\Answer.ts" />
     <None Remove="ClientApp\src\app\interfaces\Question.ts" />
@@ -64,6 +65,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\result\result-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\test\test-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\answer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\question.ts" />
@@ -79,6 +81,11 @@
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+  </Target>
+
+  <Target Name="Build Angular" Condition="'$(Configuration)' != 'Release'" BeforeTargets="Build">
+    <Message Text="Angular Build In Progress" Importance="high" />
+    <Exec Command="ng build" WorkingDirectory="ClientApp" />
   </Target>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

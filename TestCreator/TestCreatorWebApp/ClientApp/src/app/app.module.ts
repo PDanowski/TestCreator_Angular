@@ -12,6 +12,7 @@ import { HomeComponent } from './components/home/home.component';
 import { TestListComponent } from './components/test/test-list.component';
 import { TestComponent } from './components/test/test.component';
 import { TestEditComponent } from './components/test/test-edit.component';
+import { TestSearchComponent } from './components/test/test-search.component';
 import { QuestionListComponent } from './components/question/question-list.component';
 import { QuestionEditComponent } from './components/question/question-edit.component';
 import { AnswerListComponent } from './components/answer/answer-list.component';
@@ -30,6 +31,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
     TestListComponent,
     TestComponent,
     TestEditComponent,
+    TestSearchComponent,
     QuestionListComponent,
     QuestionEditComponent,
     AnswerListComponent,

@@ -1,17 +1,65 @@
-<div *ngIf="test" class="test">
-  <h2>{{test.Title}}</h2>
-  <ul>
-    <li>
-      <label>Title:</label>
-      <input [(ngModel)]="test.Title" placeholder="Put title here..."/>
-    </li>
-    <li>
-      <label>Description:</label>
-      <textarea [(ngModel)]="test.Description" placeholder="Put desciption here..."></textarea>
-    </li>
-  </ul>
-<div>
-  <input type="button" value="Edit" (click)="onEdit()"/>
-  <input type="button" value="Delete" (click)="onDelete()"/>
+<div class="test">
+  <div class="test-details">
+    <div class="test-image">
+      <img src="https://lorempixel.com/150/150/?random={{test.id}}" alt="{{test.Title}}" class="rounded-circle"/>
+    </div>
+    <div class="test-info-block">
+      <div class="test-heading">
+        <h2>{{test.Title}}</h2>
+        <span class="form-text">{{test.Description}}</span>
+        <!--<span class="form-text">Created by user # in {{test.CreationDate}}</span>-->
+      </div>
+
+      <ul class="navigation">
+        <li class="active">
+          <a data-toggle="tab" href="#description">
+            <fa-icon slot="start" [icon]="faAlignJustify"></fa-icon>
+            &nbsp; Description
+          </a>
+        </li>
+        <li>
+          <a data-toggle="tab" href="#stats">
+            <fa-icon slot="start" [icon]="faChartBar"></fa-icon>
+            &nbsp; Statistics
+          </a>
+        </li>
+        <li>
+          <a data-toggle="tab" href="#share">
+            <fa-icon slot="start" [icon]="faShare"></fa-icon>
+            &nbsp; Share
+          </a>
+        </li>
+      </ul>
+      <div class="test-body">
+        <div class="tab-content">
+          <div id="description" class="tab-pane active">
+            {{test.Text}}
+          </div>
+          <div id="stats" class="tab-pane">
+            TODO
+          </div>
+          <div id="share" class="tab-pane">
+            TODO
+          </div>
+        </div>
+      </div>
+
+      <div class="commands">
+        <a [routerLink]="['/test', test.Id, 'take']" class="btn btn-success">
+          <fa-icon slot="start" [icon]="faPlay"></fa-icon>
+          &nbsp; Start test !
+        </a>
+        <a [routerLink]="['/home']" class="btn btn-dark">
+          <fa-icon slot="start" [icon]="faHome"></fa-icon>
+          &nbsp; Back
+        </a>
+        <div class="edit">
+          <input type="button" value="Edit" (click)="onEdit()" class="btn btn-sm btn-warning" />
+          <input type="button" value="Delete" (click)="onDelete()" class="btn btn-sm btn-danger" />
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
-</div>
+

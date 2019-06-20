@@ -1,6 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { faAlignJustify, faChartBar, faShare, faPlay, faHome } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: "test",
@@ -10,7 +11,12 @@ import { HttpClient } from "@angular/common/http";
 
 export class TestComponent {
   test: Test;
-  
+  faAlignJustify = faAlignJustify;
+  faChartBar = faChartBar;
+  faShare = faShare;
+  faPlay = faPlay;
+  faHome = faHome;
+
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
