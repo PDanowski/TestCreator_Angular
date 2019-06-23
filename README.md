@@ -7,8 +7,8 @@ Used languages, technologies and tools:
     C#
     EntityFramework Core 2.2
     Angular 6
-    Bootstrap 4
+    Bootstrap 4 (+ Bootswatch)
+    LESS
     Mapster
     NUnit
     Moq
-
