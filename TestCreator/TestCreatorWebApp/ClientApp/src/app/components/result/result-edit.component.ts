@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { FormGroup, FormControl, FormBuilder, Validators } from "@angular/forms";
 
 @Component({
   selector: "result-edit",
@@ -11,12 +12,14 @@ import { HttpClient } from "@angular/common/http";
 export class ResultEditComponent {
   title: string;
   result: Result;
+  form: FormGroup;
 
   editMode: boolean;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    private fb: FormBuilder,
     @Inject('BASE_URL') private baseUrl: string) {
 
     this.result = <Result>{};
@@ -32,6 +35,7 @@ export class ResultEditComponent {
       this.http.get<Result>(url).subscribe(res => {
         this.result = res;
         this.title = "Editing - " + this.result.Text;
+          this.updateForm();
         },
         error => console.error(error));
     } else {
@@ -40,28 +44,69 @@ export class ResultEditComponent {
     }
   }
 
-  onSubmit(result: Result) {
+  createForm() {
+    this.form = this.fb.group({
+      Text: ['', Validators.required],
+      MinValue: ['', Validators.pattern(/^\d*$/)],
+      MaxValue: ['', Validators.pattern(/^\d*$/)]
+    });
+  }
+
+  updateForm() {
+    this.form.setValue({
+      Text: this.result.Text,
+      MinValue: this.result.MinValue,
+      MaxValue: this.result.MaxValue,
+    });
+  }
+
+  onSubmit() {
+
+    var tempResult = <Result>{};
+    tempResult.Text = this.form.value.Text;
+    tempResult.MinValue = this.form.value.MinValue;
+    tempResult.MaxValue = this.form.value.MaxValue;
+    tempResult.TestId = this.result.TestId;
 
     var url = this.baseUrl + "api/result";
 
     if (this.editMode) {
 
-      this.http.post<Result>(url, result).subscribe(res => {
+      this.http.post<Result>(url, tempResult).subscribe(res => {
         var v = res;
           console.log("Result " + v.Id + " was updated");
-        this.router.navigate(["test/edit", result.TestId]);
+        this.router.navigate(["test/edit", tempResult.TestId]);
         },
         error => console.log(error));
     } else {
-      this.http.put<Result>(url, result).subscribe(res => {
+      this.http.put<Result>(url, tempResult).subscribe(res => {
         var v = res;
         console.log("Result " + v.Id + " was created");
-        this.router.navigate(["test/edit", result.TestId]);
-      })
+        this.router.navigate(["test/edit", tempResult.TestId]);
+      });
     }
   }
 
   onBack() {
     this.router.navigate(["test/edit", this.result.TestId]);
+  }
+
+  getFormControl(name: string) {
+    return this.form.get(name);
+  }
+
+  isValid(name: string) {
+    var control = this.getFormControl(name);
+    return control && control.valid;
+  }
+
+  isChanged(name: string) {
+    var control = this.getFormControl(name);
+    return control && (control.dirty || control.touched);
+  }
+
+  hasError(name: string) {
+    var control = this.getFormControl(name);
+    return control && (control.dirty || control.touched) && !control.valid;
   }
 }

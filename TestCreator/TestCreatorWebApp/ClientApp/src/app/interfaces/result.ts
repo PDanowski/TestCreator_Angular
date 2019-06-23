@@ -3,5 +3,5 @@ interface Result {
   TestId: number;
   Text: string;
   MinValue?: number;
-  MaxCalue?: number;
+  MaxValue?: number;
 }
