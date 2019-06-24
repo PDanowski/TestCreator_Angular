@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TestCreatorWebApp.Data.Models;
 
@@ -9,11 +10,15 @@ namespace TestCreatorWebApp.Data
 {
     public static class DbSeeder
     {
-        public static void Seed(ApplicationDbContext context)
+        public static void Seed(ApplicationDbContext context, 
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager)
         {
             if (!context.Users.Any())
             {
-                CreateUsers(context);
+                CreateUsers(context, roleManager, userManager)
+                    .GetAwaiter()
+                    .GetResult();
             }
 
             if (!context.Tests.Any())
@@ -142,13 +147,28 @@ namespace TestCreatorWebApp.Data
             context.SaveChanges();
         }
 
-        private static void CreateUsers(ApplicationDbContext context)
+        private static async Task CreateUsers(ApplicationDbContext context,
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager)
         {
             DateTime creationDate = new DateTime(2018, 03, 01, 12, 00, 00);
             DateTime modificationDate = DateTime.Now;
 
+            string roleAdministrator = "Administrator";
+            string roleRegisteredUser = "RegisteredUser";
+
+            if (!await roleManager.RoleExistsAsync(roleAdministrator))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleAdministrator));
+            }
+            if (!await roleManager.RoleExistsAsync(roleRegisteredUser))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleRegisteredUser));
+            }
+
             var userAdmin = new ApplicationUser
             {
+                SecurityStamp = Guid.NewGuid().ToString(),
                 Id = Guid.NewGuid().ToString(),
                 UserName = "Admin",
                 Email = "admin@testcreator.com",
@@ -156,11 +176,22 @@ namespace TestCreatorWebApp.Data
                 LastModificationDate = modificationDate
             };
 
-            context.Users.Add(userAdmin);
+            if (await userManager.FindByNameAsync(userAdmin.UserName) == null)
+            {
+                await userManager.CreateAsync(userAdmin);
+                await userManager.AddToRoleAsync(userAdmin, roleRegisteredUser);
+                await userManager.AddToRoleAsync(userAdmin, roleAdministrator);
+
+                //remove lock
+                userAdmin.EmailConfirmed = true;
+                userAdmin.LockoutEnabled = false;
+            }
+
 
             #if DEBUG
             var normalUser = new ApplicationUser
             {
+                SecurityStamp = Guid.NewGuid().ToString(),
                 Id = Guid.NewGuid().ToString(),
                 UserName = "User1",
                 Email = "user1@testcreator.com",
@@ -168,10 +199,18 @@ namespace TestCreatorWebApp.Data
                 LastModificationDate = modificationDate
             };
 
-            context.Users.Add(normalUser);
+            if (await userManager.FindByNameAsync(normalUser.UserName) == null)
+            {
+                await userManager.CreateAsync(userAdmin);
+                await userManager.AddToRoleAsync(userAdmin, roleRegisteredUser);
+
+                //remove lock
+                userAdmin.EmailConfirmed = true;
+                userAdmin.LockoutEnabled = false;
+            }
             #endif
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }
