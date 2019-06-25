@@ -1,3 +1,6 @@
+using System;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,10 +11,12 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.Data;
 using TestCreatorWebApp.Data.Models;
 using TestCreatorWebApp.Repositories;
+using TestCreatorWebApp.Services;
 
 namespace TestCreatorWebApp
 {
@@ -52,7 +57,36 @@ namespace TestCreatorWebApp
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(config =>
+                {
+                    config.RequireHttpsMetadata = false;
+                    config.SaveToken = true;
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration["Auth:Jwt:Issuer"],
+                        ValidAudience = Configuration["Auth:Jwt:Audience"],
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Auth:Jwt:Key"])),
+                        ClockSkew = TimeSpan.Zero,
+
+                        //security
+                        RequireExpirationTime = true,
+                        ValidateIssuer = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateAudience = true
+                    };
+                });
+
+
             //register dependencies
+            services.Add(new ServiceDescriptor(typeof(ITokenService), typeof(TokenService), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(IUserAndRoleRepository), typeof(UserAndRoleRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITestRepository), typeof(TestRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IResultRepository), typeof(ResultRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IQuestionRepository), typeof(QuestionRepository), ServiceLifetime.Scoped));
@@ -93,6 +127,8 @@ namespace TestCreatorWebApp
                     })
             });
             app.UseSpaStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

@@ -169,7 +169,6 @@ namespace TestCreatorWebApp.Data
             var userAdmin = new ApplicationUser
             {
                 SecurityStamp = Guid.NewGuid().ToString(),
-                Id = Guid.NewGuid().ToString(),
                 UserName = "Admin",
                 Email = "admin@testcreator.com",
                 CreationDate = creationDate,
@@ -178,7 +177,7 @@ namespace TestCreatorWebApp.Data
 
             if (await userManager.FindByNameAsync(userAdmin.UserName) == null)
             {
-                await userManager.CreateAsync(userAdmin);
+                await userManager.CreateAsync(userAdmin, "Admin123+");
                 await userManager.AddToRoleAsync(userAdmin, roleRegisteredUser);
                 await userManager.AddToRoleAsync(userAdmin, roleAdministrator);
 
@@ -192,7 +191,6 @@ namespace TestCreatorWebApp.Data
             var normalUser = new ApplicationUser
             {
                 SecurityStamp = Guid.NewGuid().ToString(),
-                Id = Guid.NewGuid().ToString(),
                 UserName = "User1",
                 Email = "user1@testcreator.com",
                 CreationDate = creationDate,
@@ -201,8 +199,8 @@ namespace TestCreatorWebApp.Data
 
             if (await userManager.FindByNameAsync(normalUser.UserName) == null)
             {
-                await userManager.CreateAsync(userAdmin);
-                await userManager.AddToRoleAsync(userAdmin, roleRegisteredUser);
+                await userManager.CreateAsync(normalUser, "User123+");
+                await userManager.AddToRoleAsync(normalUser, roleRegisteredUser);
 
                 //remove lock
                 userAdmin.EmailConfirmed = true;
