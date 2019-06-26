@@ -1,1 +1,1 @@
-//# sourceMappingURL=Result.js.map
+//# sourceMappingURL=result.js.map

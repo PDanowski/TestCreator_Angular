@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -65,7 +66,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: '**', component: PageNotFoundComponent},
     ])
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
