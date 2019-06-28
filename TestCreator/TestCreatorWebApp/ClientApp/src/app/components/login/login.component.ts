@@ -40,7 +40,7 @@ export class LoginComponent {
 
 
     this.authService.login(username, password).subscribe(result => {
-        alert("Login successful - USERNAME: " + username + " TOKEN: " + this.authService.getAuth()!.token);
+        //alert("Login successful - USERNAME: " + username + " TOKEN: " + this.authService.getAuth()!.token);
 
         this.router.navigate(["home"]);
       },

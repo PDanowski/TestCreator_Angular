@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TestCreatorWebApp.Abstract;
@@ -67,6 +68,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">AnswerViewModel with data</param>
         [HttpPut]
+        [Authorize]
         public IActionResult Put([FromBody]AnswerViewModel viewModel)
         {
             if (viewModel == null)
@@ -83,6 +85,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">AnswerViewModel with data</param>
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody]AnswerViewModel viewModel)
         {
             if (viewModel == null)
@@ -106,6 +109,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="id">Identifier of AnswerViewModel</param>
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             if (_repository.DeleteAnswer(id))

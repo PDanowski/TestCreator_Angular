@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { faPlus, faSignInAlt, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { faPlus, faSignInAlt, faInfoCircle, faSignOutAlt, faHome } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-nav-menu',
@@ -12,6 +14,11 @@ export class NavMenuComponent {
   faPlus = faPlus;
   faSignInAlt = faSignInAlt;
   faInfoCircle = faInfoCircle;
+  faSignOutAlt = faSignOutAlt;
+  faHome = faHome;
+
+  constructor(public auth: AuthService,
+    private router: Router) { }
 
   collapse() {
     this.isExpanded = false;
@@ -19,5 +26,12 @@ export class NavMenuComponent {
 
   toggle() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  logout(): boolean {
+    if (this.auth.logout()) {
+      this.router.navigate([""]);
+    }
+    return false;
   }
 }

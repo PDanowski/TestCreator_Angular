@@ -1,6 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { AuthService } from '../../services/auth.service';
 import { faAlignJustify, faChartBar, faShare, faPlay, faHome } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -20,6 +21,7 @@ export class TestComponent {
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    public auth: AuthService,
     @Inject('BASE_URL') private baseUrl: string) {
 
     this.test = <Test>{};

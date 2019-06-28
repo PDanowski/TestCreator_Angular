@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -66,7 +67,14 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: '**', component: PageNotFoundComponent},
     ])
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

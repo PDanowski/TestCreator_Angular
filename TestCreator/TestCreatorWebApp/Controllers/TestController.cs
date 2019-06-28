@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TestCreatorWebApp.Abstract;
@@ -15,9 +17,9 @@ namespace TestCreatorWebApp.Controllers
     {
         private readonly ITestRepository _repository;
 
-        public TestController(ITestRepository repository)
+        public TestController(ITestRepository testRepository)
         {
-            this._repository = repository;
+            this._repository = testRepository;
         }
 
         /// <summary>
@@ -46,6 +48,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
         [HttpPut]
+        [Authorize]
         public IActionResult Put([FromBody]TestViewModel viewModel)
         {
             if (viewModel == null)
@@ -53,6 +56,7 @@ namespace TestCreatorWebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
+            viewModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var createdViewModel = _repository.CreateTest(viewModel);
             return new JsonResult(createdViewModel, JsonSettings);
         }
@@ -62,6 +66,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody]TestViewModel viewModel)
         {
             if (viewModel == null)
@@ -85,6 +90,7 @@ namespace TestCreatorWebApp.Controllers
         /// </summary>
         /// <param name="id">Identifier of TestViewModel</param>
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             if (_repository.DeleteTest(id))
