@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.Data.Models;
 using TestCreatorWebApp.Helpers;
+using TestCreatorWebApp.ViewModels;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace TestCreatorWebApp.Services
@@ -32,6 +33,46 @@ namespace TestCreatorWebApp.Services
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeMilliseconds().ToString())
+            };
+        }
+
+        public Token GenerateRefreshToken(string clientId, string userId)
+        {
+            return new Token
+            {
+                ClientId = clientId,
+                UserId = userId,
+                Type = 0,
+                Value = Guid.NewGuid().ToString("N"),
+                CreationDate = DateTime.Now
+            };
+        }
+
+        public TokenData CreateAccessToken(string userId)
+        {
+            DateTime now = DateTime.UtcNow;
+
+            var claims = CreateClaims(userId);
+
+            var tokenExpirationMins = Configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
+            var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Auth:Jwt:Key"]));
+
+            var token = new JwtSecurityToken(
+                issuer: Configuration["Auth:Jwt:Issuer"],
+                audience: Configuration["Auth:Jwt:Audience"],
+                claims: claims,
+                notBefore: now,
+                expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
+                signingCredentials: new SigningCredentials(
+                    issuerSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return new TokenData
+            {
+                EncodedToken = encodedToken,
+                ExporationTimeInMinutes = tokenExpirationMins,
             };
         }
 

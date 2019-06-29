@@ -91,6 +91,7 @@ namespace TestCreatorWebApp
             services.Add(new ServiceDescriptor(typeof(IResultRepository), typeof(ResultRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IQuestionRepository), typeof(QuestionRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IAnswerRepository), typeof(AnswerRepository), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ITokenRepository), typeof(TokenRepository), ServiceLifetime.Scoped));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

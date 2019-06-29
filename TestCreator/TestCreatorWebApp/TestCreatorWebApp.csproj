@@ -53,6 +53,7 @@
     <None Remove="ClientApp\src\app\interfaces\Test.ts" />
     <None Remove="ClientApp\src\app\interfaces\token.response.ts" />
     <None Remove="ClientApp\src\app\services\auth.interceptor.ts" />
+    <None Remove="ClientApp\src\app\services\auth.response.interceptor.ts" />
     <None Remove="ClientApp\src\app\services\auth.service.ts" />  
   </ItemGroup>
 
@@ -76,6 +77,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\token.response.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\auth.response.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.service.ts" />
   </ItemGroup>
 

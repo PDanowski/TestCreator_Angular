@@ -29,6 +29,11 @@ namespace TestCreatorWebApp.Repositories
             return _userManager.FindByEmailAsync(email);
         }
 
+        public Task<ApplicationUser> GetUserById(string userId)
+        {
+            return _userManager.FindByIdAsync(userId);
+        }
+
         public Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
         {
             return _userManager.CheckPasswordAsync(user, password);

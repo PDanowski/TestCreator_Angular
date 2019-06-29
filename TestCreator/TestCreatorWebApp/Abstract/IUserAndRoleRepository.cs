@@ -10,6 +10,7 @@ namespace TestCreatorWebApp.Abstract
     {
         Task<ApplicationUser> GetUserByNameAsync(string userName);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
+        Task<ApplicationUser> GetUserById(string userId);
         Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
     }
 }

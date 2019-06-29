@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TestCreatorWebApp.Data.Models;
 using TestCreatorWebApp.Helpers;
+using TestCreatorWebApp.ViewModels;
 
 namespace TestCreatorWebApp.Abstract
 {
@@ -13,5 +14,7 @@ namespace TestCreatorWebApp.Abstract
     {
         Claim[] CreateClaims(string userId);
         TokenData CreateSecurityToken(Claim[] claims);
+        Token GenerateRefreshToken(string clientId, string userId);
+        TokenData CreateAccessToken(string userId);
     }
 }

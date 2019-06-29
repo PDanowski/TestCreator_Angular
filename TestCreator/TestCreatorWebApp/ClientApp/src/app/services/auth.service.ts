@@ -15,7 +15,7 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: any) {
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string): Observable<boolean>{
     var url = "api/token/auth";
     var data = {
       Username: username,
@@ -25,17 +25,7 @@ export class AuthService {
       Scope: "offline_access profile email"
     };
 
-    return this.http.post<TokenResponse>(url, data).pipe(map((result) => {
-      let token = result && result.token;
-
-      if (token) {
-        this.setAuth(result);
-
-        return true;
-      }
-
-      return Observable.throw('Unauthorized');
-    }), catchError((err, caught) => { return new Observable<any>(err)}) );
+    return this.getAuthFromServer(url, data);
   }
 
   logout() : boolean {
@@ -69,5 +59,31 @@ export class AuthService {
       return localStorage.getItem(this.authKey) != null;
     }
     return false;
+  }
+
+  refreshToken() : Observable<boolean> {
+    var url = "api/token/auth";
+    var data = {
+      ClientId: this.clientId,
+      GrantType: "refresh_token",
+      Scope: "offline_access profile email",
+      RefreshToken: this.getAuth()!.refreshToken
+    };
+
+    return this.getAuthFromServer(url, data);
+  }
+
+  getAuthFromServer(url: string, data: any) : Observable<boolean>{
+    return this.http.post<TokenResponse>(url, data).pipe(map((result) => {
+      let token = result && result.token;
+
+      if (token) {
+        this.setAuth(result);
+
+        return true;
+      }
+
+      return Observable.throw('Unauthorized');
+    }), catchError((err, caught) => { return new Observable<any>(err) }));
   }
 }
