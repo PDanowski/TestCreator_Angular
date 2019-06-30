@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { faPlus, faSignInAlt, faInfoCircle, faSignOutAlt, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSignInAlt, faInfoCircle, faSignOutAlt, faHome, faUser } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-nav-menu',
@@ -16,6 +16,7 @@ export class NavMenuComponent {
   faInfoCircle = faInfoCircle;
   faSignOutAlt = faSignOutAlt;
   faHome = faHome;
+  faUser = faUser;
 
   constructor(public auth: AuthService,
     private router: Router) { }

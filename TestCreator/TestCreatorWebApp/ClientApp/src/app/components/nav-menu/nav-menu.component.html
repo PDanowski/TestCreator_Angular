@@ -27,6 +27,12 @@
                 Login
               </a>
             </li>
+            <li *ngIf="!this.auth.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
+              <a class="nav-link text-dark" [routerLink]="['/register']">
+                <fa-icon slot="start" [icon]="faUser"></fa-icon>
+                Register
+              </a>
+            </li>
             <li *ngIf="this.auth.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
               <a class="nav-link text-dark" (click)="logout()">
                 <fa-icon slot="start" [icon]="faSignOutAlt"></fa-icon>

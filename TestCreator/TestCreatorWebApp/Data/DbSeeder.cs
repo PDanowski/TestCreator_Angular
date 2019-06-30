@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using TestCreatorWebApp.Constants;
 using TestCreatorWebApp.Data.Models;
 
 namespace TestCreatorWebApp.Data
@@ -154,16 +155,13 @@ namespace TestCreatorWebApp.Data
             DateTime creationDate = new DateTime(2018, 03, 01, 12, 00, 00);
             DateTime modificationDate = DateTime.Now;
 
-            string roleAdministrator = "Administrator";
-            string roleRegisteredUser = "RegisteredUser";
-
-            if (!await roleManager.RoleExistsAsync(roleAdministrator))
+            if (!await roleManager.RoleExistsAsync(UserRoles.Administrator))
             {
-                await roleManager.CreateAsync(new IdentityRole(roleAdministrator));
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.Administrator));
             }
-            if (!await roleManager.RoleExistsAsync(roleRegisteredUser))
+            if (!await roleManager.RoleExistsAsync(UserRoles.RegisteredUser))
             {
-                await roleManager.CreateAsync(new IdentityRole(roleRegisteredUser));
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.RegisteredUser));
             }
 
             var userAdmin = new ApplicationUser
@@ -178,8 +176,8 @@ namespace TestCreatorWebApp.Data
             if (await userManager.FindByNameAsync(userAdmin.UserName) == null)
             {
                 await userManager.CreateAsync(userAdmin, "Admin123+");
-                await userManager.AddToRoleAsync(userAdmin, roleRegisteredUser);
-                await userManager.AddToRoleAsync(userAdmin, roleAdministrator);
+                await userManager.AddToRoleAsync(userAdmin, UserRoles.RegisteredUser);
+                await userManager.AddToRoleAsync(userAdmin, UserRoles.Administrator);
 
                 //remove lock
                 userAdmin.EmailConfirmed = true;
@@ -200,7 +198,7 @@ namespace TestCreatorWebApp.Data
             if (await userManager.FindByNameAsync(normalUser.UserName) == null)
             {
                 await userManager.CreateAsync(normalUser, "User123+");
-                await userManager.AddToRoleAsync(normalUser, roleRegisteredUser);
+                await userManager.AddToRoleAsync(normalUser, UserRoles.RegisteredUser);
 
                 //remove lock
                 userAdmin.EmailConfirmed = true;

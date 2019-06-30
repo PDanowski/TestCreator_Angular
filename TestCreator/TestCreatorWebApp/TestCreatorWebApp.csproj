@@ -47,11 +47,13 @@
     <None Remove="ClientApp\src\app\components\test\test-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-search.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test.component.ts" />
+    <None Remove="ClientApp\src\app\components\user\register.component.ts" />
     <None Remove="ClientApp\src\app\interfaces\Answer.ts" />
     <None Remove="ClientApp\src\app\interfaces\Question.ts" />
     <None Remove="ClientApp\src\app\interfaces\Result.ts" />
     <None Remove="ClientApp\src\app\interfaces\Test.ts" />
     <None Remove="ClientApp\src\app\interfaces\token.response.ts" />
+    <None Remove="ClientApp\src\app\interfaces\user.ts" />
     <None Remove="ClientApp\src\app\services\auth.interceptor.ts" />
     <None Remove="ClientApp\src\app\services\auth.response.interceptor.ts" />
     <None Remove="ClientApp\src\app\services\auth.service.ts" />  
@@ -71,11 +73,13 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\user\register.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\answer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\question.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\result.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\token.response.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\interfaces\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.response.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.service.ts" />
