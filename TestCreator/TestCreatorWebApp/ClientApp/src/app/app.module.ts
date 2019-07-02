@@ -16,6 +16,7 @@ import { TestListComponent } from './components/test/test-list.component';
 import { TestComponent } from './components/test/test.component';
 import { TestEditComponent } from './components/test/test-edit.component';
 import { TestSearchComponent } from './components/test/test-search.component';
+import { TestSearchResultComponent } from './components/test/test-search-result.component';
 import { QuestionListComponent } from './components/question/question-list.component';
 import { QuestionEditComponent } from './components/question/question-edit.component';
 import { AnswerListComponent } from './components/answer/answer-list.component';
@@ -36,6 +37,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
     TestComponent,
     TestEditComponent,
     TestSearchComponent,
+    TestSearchResultComponent,
     QuestionListComponent,
     QuestionEditComponent,
     AnswerListComponent,
@@ -59,6 +61,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: 'test/create', component: TestEditComponent },
       { path: 'test/:id', component: TestComponent },
       { path: 'test/edit/:id', component: TestEditComponent },
+      { path: 'test/search/:text', component: TestSearchResultComponent },
       { path: 'question/edit/:id', component: QuestionEditComponent },
       { path: 'question/create/:id', component: QuestionEditComponent },
       { path: 'answer/edit/:id', component: AnswerEditComponent },

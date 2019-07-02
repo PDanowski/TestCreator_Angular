@@ -45,6 +45,7 @@
     <None Remove="ClientApp\src\app\components\result\result-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-edit.component.ts" />
+    <None Remove="ClientApp\src\app\components\test\test-search-result.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-search.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test.component.ts" />
     <None Remove="ClientApp\src\app\components\user\register.component.ts" />
@@ -71,6 +72,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\result\result-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\test\test-search-result.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\user\register.component.ts" />

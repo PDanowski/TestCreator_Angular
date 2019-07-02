@@ -49,6 +49,14 @@ namespace TestCreatorWebApp.Repositories
             return random.Adapt<List<TestViewModel>>();
         }
 
+        public List<TestViewModel> Search(string text, int number)
+        {
+            var random = _context.Tests.Where(t => t.Title.Contains(text))
+                .Take(number)
+                .ToList();
+            return random.Adapt<List<TestViewModel>>();
+        }
+
         public TestViewModel CreateTest(TestViewModel viewModel)
         {
             var test = viewModel.Adapt<Test>();

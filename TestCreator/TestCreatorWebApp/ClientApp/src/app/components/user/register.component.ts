@@ -66,7 +66,7 @@ export class RegisterComponent {
         if (result) {
           var res = result;
           console.log("User " + res.Username + " was successfully created");
-          this.router.navigate(["login"]);
+          this.router.navigate(["login", { mode: "registration"}]);
         } else {
           this.form.setErrors({
             "register": "Registration failed"

@@ -118,7 +118,7 @@ namespace TestCreatorWebApp.Controllers
         }
 
         /// <summary>
-        /// GET: api/quiz/ByTitle
+        /// GET: api/test/ByTitle
         /// </summary>
         /// <param name="num"></param>
         /// <returns>{num} TestViewModels order by title</returns>
@@ -132,7 +132,7 @@ namespace TestCreatorWebApp.Controllers
 
 
         /// <summary>
-        /// GET: api/quiz/Random
+        /// GET: api/test/Random
         /// </summary>
         /// <param name="num"></param>
         /// <returns>{num} random TestViewModels</returns>
@@ -142,6 +142,20 @@ namespace TestCreatorWebApp.Controllers
             var sampleTests = _repository.GetRandomTests(num);
 
             return new JsonResult(sampleTests?.OrderBy(t => Guid.NewGuid()), JsonSettings);
+        }
+
+        /// <summary>
+        /// GET: api/test/ByTitle
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="num"></param>
+        /// <returns>{num} TestViewModels searched by title</returns>
+        [HttpGet("Search/{num:int?}")]
+        public IActionResult Search([FromQuery]string text, int num = 10)
+        {
+            var tests = _repository.Search(text, num);
+
+            return new JsonResult(tests, JsonSettings);
         }
     }
 }

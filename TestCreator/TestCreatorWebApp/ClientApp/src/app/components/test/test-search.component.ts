@@ -1,4 +1,6 @@
 import { Component, Input } from "@angular/core";
+import { Router } from "@angular/router";
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: "test-search",
@@ -7,5 +9,14 @@ import { Component, Input } from "@angular/core";
 })
 
 export class TestSearchComponent {
-  @Input() placeholder: string;
+  constructor(private router: Router) {  }
+
+  onSubmit(form: NgForm) {
+    let val = form.controls.searchedPhrase.value;
+    if (val) {
+      form.controls.searchedPhrase.setValue('Text...');
+      this.router.navigate(["test/search", val]);
+    }
+    
+  }
 }

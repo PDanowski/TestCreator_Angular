@@ -12,6 +12,7 @@ namespace TestCreatorWebApp.Abstract
         List<TestViewModel> GetLatestTests(int number);
         List<TestViewModel> GetTestsByTitle(int number);
         List<TestViewModel> GetRandomTests(int number);
+        List<TestViewModel> Search(string text, int number);
         TestViewModel CreateTest(TestViewModel viewModel);
         TestViewModel UpdateTest(TestViewModel viewModel);
         bool DeleteTest(int id);

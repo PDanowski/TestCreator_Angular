@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { AuthService } from '../../services/auth.service';
 import { FormGroup, FormControl, FormBuilder, Validators } from "@angular/forms";
 
@@ -14,12 +14,19 @@ export class LoginComponent {
   form: FormGroup;
 
 
-  constructor(private router: Router,
+  constructor(private activatedRoute: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     private authService: AuthService,
     @Inject('BASE_URL') private baseUrl: string) {
 
-    this.title = "Log in";
+    var afterRegistration = this.activatedRoute.snapshot.params["mode"];
+
+    if (afterRegistration && afterRegistration === "registration") {
+      this.title = "Registration successful, now you can log in";
+    } else {
+      this.title = "Log in";
+    }  
 
     this.createForm();
 

@@ -60,7 +60,6 @@ export class TestListComponent implements OnInit {
   onSelect(test: Test) {
     this.selectedTest = test;
     console.log("Selected test: " + this.selectedTest.Id);
-
     this.router.navigate(["test", this.selectedTest.Id]);
   }
 
