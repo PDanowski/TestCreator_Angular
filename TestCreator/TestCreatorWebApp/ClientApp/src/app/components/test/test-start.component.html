@@ -1,0 +1,26 @@
+<h3>Test: {{title}}</h3>
+<div *ngIf="testAttempt.TestAttemptEntries.length > 0">
+  <div class="table-responsive">
+    <table class="table table-hover questions">
+      <thead>
+      <tr>
+        <th>Question</th>
+        <th>Answers</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let TestAttemptEntry of testAttempt.TestAttemptEntries">
+        <td>{{TestAttemptEntry.Question.Text}}</td>
+        <td>
+          <div *ngFor="let Answer of TestAttemptEntry.Answers">
+            {{Answer.Text}}
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div *ngIf="testAttempt.TestAttemptEntries.length == 0">
+  Test cannot be started because it has no questions defined.
+</div>

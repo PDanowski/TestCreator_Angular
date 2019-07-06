@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 using TestCreatorWebApp.Abstract;
 using TestCreatorWebApp.Data;
 using TestCreatorWebApp.Data.Models;
@@ -23,6 +24,37 @@ namespace TestCreatorWebApp.Repositories
         {
             var test = _context.Tests.FirstOrDefault(t => t.Id.Equals(id));
             return test.Adapt<TestViewModel>();
+        }
+
+        public TestAttemptViewModel StartTest(int id)
+        {
+            var test = _context.Tests.Where(t => t.Id.Equals(id))
+                .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefault();
+
+            if (test == null)
+            {
+                return null;
+            }
+
+            var viewModel = new TestAttemptViewModel
+            {
+                TestId = test.Id,
+                Title = test.Title,
+                TestAttemptEntries = new List<TestAttemptEntryViewModel>()
+        };
+
+            foreach (var question in test.Questions)
+            {
+                viewModel.TestAttemptEntries.Add(new TestAttemptEntryViewModel
+                {
+                    Question = question.Adapt<QuestionViewModel>(),
+                    Answers = question.Answers.Adapt<List<AnswerViewModel>>()
+                });
+            }
+
+            return viewModel;
         }
 
         public List<TestViewModel> GetLatestTests(int number)

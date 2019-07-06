@@ -14,6 +14,7 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './components/home/home.component';
 import { TestListComponent } from './components/test/test-list.component';
 import { TestComponent } from './components/test/test.component';
+import { TestStartComponent } from './components/test/test-start.component';
 import { TestEditComponent } from './components/test/test-edit.component';
 import { TestSearchComponent } from './components/test/test-search.component';
 import { TestSearchResultComponent } from './components/test/test-search-result.component';
@@ -35,6 +36,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
     HomeComponent,
     TestListComponent,
     TestComponent,
+    TestStartComponent,
     TestEditComponent,
     TestSearchComponent,
     TestSearchResultComponent,
@@ -60,6 +62,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: 'home', component: HomeComponent },
       { path: 'test/create', component: TestEditComponent },
       { path: 'test/:id', component: TestComponent },
+      { path: 'test/start/:id', component: TestStartComponent },
       { path: 'test/edit/:id', component: TestEditComponent },
       { path: 'test/search/:text', component: TestSearchResultComponent },
       { path: 'question/edit/:id', component: QuestionEditComponent },
@@ -71,7 +74,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: 'about', component: AboutComponent },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      { path: '**', component: PageNotFoundComponent},
+      { path: '**', component: PageNotFoundComponent}
     ])
   ],
   providers: [

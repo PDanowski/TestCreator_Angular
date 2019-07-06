@@ -9,6 +9,7 @@ namespace TestCreatorWebApp.Abstract
     public interface ITestRepository
     {
         TestViewModel GetTest(int id);
+        TestAttemptViewModel StartTest(int id);
         List<TestViewModel> GetLatestTests(int number);
         List<TestViewModel> GetTestsByTitle(int number);
         List<TestViewModel> GetRandomTests(int number);

@@ -44,6 +44,27 @@ namespace TestCreatorWebApp.Controllers
         }
 
         /// <summary>
+        /// GET: api/test/start/{id}
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Single TestAttemptViewModel with given {id}</returns>
+        [HttpGet("start/{id}")]
+        public IActionResult Start(int id)
+        {
+            var viewModel = _repository.StartTest(id);
+
+            if (viewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Test with identifier {id} was not found"
+                });
+            }
+
+            return new JsonResult(viewModel, JsonSettings);
+        }
+
+        /// <summary>
         /// PUT: api/test/put
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
