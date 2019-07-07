@@ -26,6 +26,11 @@ namespace TestCreatorWebApp.Services
 
         public Claim[] CreateClaims(string userId)
         {
+            if (userId == null)
+            {
+                throw new ArgumentException("UserId can't be NULL");
+            }
+
             DateTime now = DateTime.UtcNow;
 
             return new[]
@@ -38,6 +43,11 @@ namespace TestCreatorWebApp.Services
 
         public Token GenerateRefreshToken(string clientId, string userId)
         {
+            if (userId == null || clientId == null) 
+            {
+                throw new ArgumentException("Arguments can't be NULL");
+            }
+
             return new Token
             {
                 ClientId = clientId,
@@ -50,39 +60,29 @@ namespace TestCreatorWebApp.Services
 
         public TokenData CreateAccessToken(string userId)
         {
-            DateTime now = DateTime.UtcNow;
+            if (userId == null)
+            {
+                throw new ArgumentException("UserId can't be NULL");
+            }
 
             var claims = CreateClaims(userId);
 
-            var tokenExpirationMins = Configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
-            var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Auth:Jwt:Key"]));
-
-            var token = new JwtSecurityToken(
-                issuer: Configuration["Auth:Jwt:Issuer"],
-                audience: Configuration["Auth:Jwt:Audience"],
-                claims: claims,
-                notBefore: now,
-                expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
-                signingCredentials: new SigningCredentials(
-                    issuerSigningKey, SecurityAlgorithms.HmacSha256)
-            );
-
-            var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return new TokenData
-            {
-                EncodedToken = encodedToken,
-                ExporationTimeInMinutes = tokenExpirationMins,
-            };
+            return CreateSecurityToken(claims);
         }
 
         public TokenData CreateSecurityToken(Claim[] claims)
         {
+            if (claims == null)
+            {
+                throw new ArgumentException("Claims can't be NULL");
+            }
+
             DateTime now = DateTime.UtcNow;
             var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Auth:Jwt:Key"]));
             var tokenExpirationalMins = Configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
 
-            var token = new JwtSecurityToken(issuer: Configuration["Auth:Jwt:Issuer"],
+            var token = new JwtSecurityToken(
+                issuer: Configuration["Auth:Jwt:Issuer"],
                 audience: Configuration["Auth:Jwt:Audience"],
                 claims: claims,
                 notBefore: now,
