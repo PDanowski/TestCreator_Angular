@@ -8,7 +8,7 @@ namespace TestCreatorWebApp.ViewModels
     public class TestAttemptEntryViewModel
     {
         public QuestionViewModel Question { get; set; }
-        public List<AnswerViewModel> Answers { get; set; }
-        public int? SelectedAnswerId { get; set; }
+        public List<TestAttemptAnswerViewModel> Answers { get; set; }
+        public bool IsMultitipleChoise => Answers.Count(a => a.Value > 0) > 1;
     }
 }

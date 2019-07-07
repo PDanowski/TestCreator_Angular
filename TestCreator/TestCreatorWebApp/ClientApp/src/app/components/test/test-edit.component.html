@@ -4,7 +4,7 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" [ngClass]="{ 'has-error has-feedback' : hasError('Title') }"
         class="was-validated">
     <div class="form-group">
-      <label for="title">Title</label>
+      <label for="Title">Title</label>
       <br />
       <input type="text" id="Title" formControlName="Title" required placeholder="Enter title here..." class="form-control" />
       <div *ngIf="hasError('Title')"

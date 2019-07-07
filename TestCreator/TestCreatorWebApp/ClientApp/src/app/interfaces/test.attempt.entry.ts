@@ -1,5 +1,5 @@
 interface TestAttemptEntry {
-  SelectedAnswerId?: number;
+  IsMultitipleChoise: boolean;
   Question: Question;
-  Answers: Answer[];
+  Answers: TestAttemptAnswer[];
 }

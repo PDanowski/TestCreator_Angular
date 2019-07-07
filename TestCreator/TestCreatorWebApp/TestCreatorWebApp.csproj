@@ -53,6 +53,7 @@
     <None Remove="ClientApp\src\app\interfaces\Answer.ts" />
     <None Remove="ClientApp\src\app\interfaces\Question.ts" />
     <None Remove="ClientApp\src\app\interfaces\Result.ts" />
+    <None Remove="ClientApp\src\app\interfaces\test.attempt.answer.ts" />
     <None Remove="ClientApp\src\app\interfaces\test.attempt.entry.ts" />
     <None Remove="ClientApp\src\app\interfaces\test.attempt.ts" />
     <None Remove="ClientApp\src\app\interfaces\Test.ts" />
@@ -83,6 +84,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\answer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\question.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\result.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.answer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.entry.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.ts" />

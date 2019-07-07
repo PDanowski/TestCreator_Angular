@@ -16,10 +16,12 @@ namespace TestCreatorWebApp.Controllers
     public class TestController : BaseApiController
     {
         private readonly ITestRepository _repository;
+        private readonly ITestService _service;
 
-        public TestController(ITestRepository testRepository)
+        public TestController(ITestRepository testRepository, ITestService service)
         {
             this._repository = testRepository;
+            this._service = service;
         }
 
         /// <summary>
@@ -58,6 +60,35 @@ namespace TestCreatorWebApp.Controllers
                 return NotFound(new
                 {
                     Error = $"Test with identifier {id} was not found"
+                });
+            }
+
+            return new JsonResult(viewModel, JsonSettings);
+        }
+
+        /// <summary>
+        /// POST: api/test/result
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Single TestAttemptViewModel with given {id}</returns>
+        [HttpPost]
+        public IActionResult Result([FromBody]TestAttemptViewModel viewModel)
+        {
+            if (viewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error - argument is NULL"
+                });
+            }
+
+            var resultViewModel = _service.CalculateResult(viewModel);
+
+            if (resultViewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during calculating results"
                 });
             }
 

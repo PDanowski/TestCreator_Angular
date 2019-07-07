@@ -86,6 +86,7 @@ namespace TestCreatorWebApp
 
             //register dependencies
             services.Add(new ServiceDescriptor(typeof(ITokenService), typeof(TokenService), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ITestService), typeof(TestService), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IUserAndRoleRepository), typeof(UserAndRoleRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITestRepository), typeof(TestRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IResultRepository), typeof(ResultRepository), ServiceLifetime.Scoped));

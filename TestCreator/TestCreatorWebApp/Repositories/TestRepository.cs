@@ -50,12 +50,14 @@ namespace TestCreatorWebApp.Repositories
                 viewModel.TestAttemptEntries.Add(new TestAttemptEntryViewModel
                 {
                     Question = question.Adapt<QuestionViewModel>(),
-                    Answers = question.Answers.Adapt<List<AnswerViewModel>>()
+                    Answers = question.Answers.Adapt<List<TestAttemptAnswerViewModel>>()
                 });
             }
 
             return viewModel;
         }
+
+
 
         public List<TestViewModel> GetLatestTests(int number)
         {
