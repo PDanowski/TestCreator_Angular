@@ -69,8 +69,8 @@ namespace TestCreatorWebApp.Controllers
         /// <summary>
         /// POST: api/test/result
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Single TestAttemptViewModel with given {id}</returns>
+        /// <param name="viewModel">TestAttemptViewModel with data</param>
+        /// <returns>Calculate result and return TestAttemptResultViewModel for given {viewModel}</returns>
         [HttpPost]
         public IActionResult Result([FromBody]TestAttemptViewModel viewModel)
         {

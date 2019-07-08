@@ -1,10 +1,328 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
+using TestCreatorWebApp.Abstract;
+using TestCreatorWebApp.Controllers;
+using TestCreatorWebApp.Data.Models;
+using TestCreatorWebApp.Helpers;
+using TestCreatorWebApp.ViewModels;
 
 namespace TestCreatorWebApp.Tests.Controllers
 {
-    class TokenControllerTests
+    [TestFixture]
+    public class TokenControllerTests
     {
+        [Test]
+        public void Auth_BodyViewModelWithPasswordGrantTypeAndUserName_ReturnsTokenResponse()
+        {
+            var username = "username1";
+            var userId = Guid.NewGuid().ToString();
+            var clientId = Guid.NewGuid().ToString();
+
+            var token = new Token
+            {
+                ClientId = clientId,
+                UserId = userId,
+                Id = 1,
+                CreationDate = DateTime.Now,
+                Value = Guid.NewGuid().ToString()
+            };
+
+            var tokenData = new TokenData
+            {
+                ExporationTimeInMinutes = 60,
+                EncodedToken = token.Value
+            };
+
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = username,
+                ClientId = clientId,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "password"
+            };
+            ApplicationUser user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = username
+            };
+
+
+            var mockServie = new Mock<ITokenService>();
+            mockServie.Setup(x => x.GenerateRefreshToken(clientId, userId)).Returns(token);
+            mockServie.Setup(x => x.CreateAccessToken(userId)).Returns(tokenData);
+
+            var mockUserAndRolesRepo = new Mock<IUserAndRoleRepository>();
+            mockUserAndRolesRepo.Setup(x => x.GetUserByNameAsync(username)).Returns(Task.FromResult(user));
+            mockUserAndRolesRepo.Setup(x => x.CheckPasswordAsync(user, It.IsAny<string>())).Returns(Task.FromResult(true));
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.AddRefreshToken(It.IsAny<Token>())).Verifiable();
+
+
+            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, mockServie.Object);
+
+            var result = controller.Auth(viewModel).Result as JsonResult;
+
+            Assert.IsNotNull(result);
+
+            var json = new JsonResult(new TokenResponseViewModel
+            {
+                Expiration = tokenData.ExporationTimeInMinutes,
+                RefreshToken = tokenData.EncodedToken,
+                Token = token.Value
+            });
+
+            Assert.AreEqual(result.Value.ToString(), json.Value.ToString());
+        }
+
+
+        [Test]
+        public void Auth_BodyViewModelWithPasswordGrantTypeAndEmail_ReturnsTokenResponse()
+        {
+            var username = "username1@wp.pl";
+            var userId = Guid.NewGuid().ToString();
+            var clientId = Guid.NewGuid().ToString();
+
+            var token = new Token
+            {
+                ClientId = clientId,
+                UserId = userId,
+                Id = 1,
+                CreationDate = DateTime.Now,
+                Value = Guid.NewGuid().ToString()
+            };
+
+            var tokenData = new TokenData
+            {
+                ExporationTimeInMinutes = 60,
+                EncodedToken = token.Value
+            };
+
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = username,
+                ClientId = clientId,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "password"
+            };
+            ApplicationUser user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = username
+            };
+
+
+            var mockServie = new Mock<ITokenService>();
+            mockServie.Setup(x => x.GenerateRefreshToken(clientId, userId)).Returns(token);
+            mockServie.Setup(x => x.CreateAccessToken(userId)).Returns(tokenData);
+
+            var mockUserAndRolesRepo = new Mock<IUserAndRoleRepository>();
+            mockUserAndRolesRepo.Setup(x => x.GetUserByNameAsync(username)).Returns(Task.FromResult<ApplicationUser>(null));
+            mockUserAndRolesRepo.Setup(x => x.GetUserByEmailAsync(username)).Returns(Task.FromResult(user));
+            mockUserAndRolesRepo.Setup(x => x.CheckPasswordAsync(user, It.IsAny<string>())).Returns(Task.FromResult(true));
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.AddRefreshToken(It.IsAny<Token>())).Verifiable();
+
+
+            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, mockServie.Object);
+
+            var result = controller.Auth(viewModel).Result as JsonResult;
+
+            Assert.IsNotNull(result);
+
+            var json = new JsonResult(new TokenResponseViewModel
+            {
+                Expiration = tokenData.ExporationTimeInMinutes,
+                RefreshToken = tokenData.EncodedToken,
+                Token = token.Value
+            });
+
+            Assert.AreEqual(result.Value.ToString(), json.Value.ToString());
+        }
+
+        [Test]
+        public void Auth_BodyViewModelWithPasswordGrantTypeWrongPassword_ReturnsUnauthorizedResult()
+        {
+            var username = "username1@wp.pl";
+            var userId = Guid.NewGuid().ToString();
+            var clientId = Guid.NewGuid().ToString();
+
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = username,
+                ClientId = clientId,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "password"
+            };
+            ApplicationUser user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = username
+            };
+
+
+            var mockUserAndRolesRepo = new Mock<IUserAndRoleRepository>();
+            mockUserAndRolesRepo.Setup(x => x.GetUserByNameAsync(username)).Returns(Task.FromResult(user));
+            mockUserAndRolesRepo.Setup(x => x.CheckPasswordAsync(user, It.IsAny<string>())).Returns(Task.FromResult(false));
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.AddRefreshToken(It.IsAny<Token>())).Verifiable();
+
+
+            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, null);
+
+            Assert.IsInstanceOf<UnauthorizedResult>(controller.Auth(viewModel).Result);
+        }
+
+        [Test]
+        public void Auth_NullBodyViewModel_ReturnsStatusCode500()
+        {
+            var controller = new TokenController(null, null, null);
+
+            var result = controller.Auth(null).Result as StatusCodeResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 500);
+        }
+
+        [Test]
+        public void Auth_BodyViewModelWithRefreshTokenGrantTypeAndUserName_ReturnsTokenResponse()
+        {
+            var username = "username1";
+            var userId = Guid.NewGuid().ToString();
+            var clientId = Guid.NewGuid().ToString();
+
+            var refreshToken = new Token
+            {
+                ClientId = clientId,
+                UserId = userId,
+                Id = 1,
+                CreationDate = DateTime.Now,
+                Value = Guid.NewGuid().ToString()
+            };
+
+            var newRefreshToken = new Token
+            {
+                ClientId = clientId,
+                UserId = userId,
+                Id = 1,
+                CreationDate = DateTime.Now,
+                Value = Guid.NewGuid().ToString()
+            };
+
+            var tokenData = new TokenData
+            {
+                ExporationTimeInMinutes = 60,
+                EncodedToken = refreshToken.Value
+            };
+
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = username,
+                ClientId = clientId,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "refresh_token"
+            };
+            ApplicationUser user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = username
+            };
+
+
+            var mockServie = new Mock<ITokenService>();
+            mockServie.Setup(x => x.GenerateRefreshToken(clientId, userId)).Returns(newRefreshToken);
+            mockServie.Setup(x => x.CreateAccessToken(userId)).Returns(tokenData);
+
+            var mockUserAndRolesRepo = new Mock<IUserAndRoleRepository>();
+            mockUserAndRolesRepo.Setup(x => x.GetUserById(userId)).Returns(Task.FromResult(user));
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.AddRefreshToken(It.IsAny<Token>())).Verifiable();
+            mockTokenRepo.Setup(x => x.RemoveRefreshToken(It.IsAny<Token>())).Verifiable();
+            mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
+                .Returns(refreshToken);
+
+            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, mockServie.Object);
+
+            var result = controller.Auth(viewModel).Result as JsonResult;
+
+            Assert.IsNotNull(result);
+
+            var json = new JsonResult(new TokenResponseViewModel
+            {
+                Expiration = tokenData.ExporationTimeInMinutes,
+                RefreshToken = tokenData.EncodedToken,
+                Token = newRefreshToken.Value
+            });
+
+            Assert.AreEqual(result.Value.ToString(), json.Value.ToString());
+        }
+
+        [Test]
+        public void Auth_BodyViewModelWithRefreshTokenGrantTypeAndWrongUserName_ReturnsUnauthorizedResult()
+        {
+            var username = "username1";
+            var userId = Guid.NewGuid().ToString();
+            var clientId = Guid.NewGuid().ToString();
+
+            var refreshToken = new Token
+            {
+                ClientId = clientId,
+                UserId = userId,
+                Id = 1,
+                CreationDate = DateTime.Now,
+                Value = Guid.NewGuid().ToString()
+            };
+
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = username,
+                ClientId = clientId,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "refresh_token"
+            };
+
+            var mockUserAndRolesRepo = new Mock<IUserAndRoleRepository>();
+            mockUserAndRolesRepo.Setup(x => x.GetUserById(userId)).Returns(Task.FromResult<ApplicationUser>(null));
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
+                .Returns(refreshToken);
+
+            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, null);
+
+            Assert.IsInstanceOf<UnauthorizedResult>(controller.Auth(viewModel).Result);
+        }
+
+        [Test]
+        public void Auth_BodyViewModelWithRefreshTokenGrantTypeAndInvalidRefreshToken_ReturnsUnauthorizedResult()
+        {
+            var username = "username1";
+            var clientId = Guid.NewGuid().ToString();
+
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = username,
+                ClientId = clientId,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "refresh_token"
+            };
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
+                .Returns((Token)null);
+
+            var controller = new TokenController(null, mockTokenRepo.Object, null);
+
+            Assert.IsInstanceOf<UnauthorizedResult>(controller.Auth(viewModel).Result);
+        }
     }
 }
