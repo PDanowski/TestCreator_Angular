@@ -19,5 +19,15 @@ namespace TestCreatorWebApp.Tests.Helpers
                 throw new ArgumentException("{propertyName} not found", "propertyName");
             return (T)property.GetValue(jsonResult.Value, null);
         }
+
+        public static IEnumerable<T> GetIEnumberableFromJsonResult<T>(this JsonResult jsonResult)
+        {
+            return jsonResult.Value as IEnumerable<T>;
+        }
+
+        public static T GetObjectFromJsonResult<T>(this JsonResult jsonResult) where T : class
+        {
+            return jsonResult.Value as T;
+        }
     }
 }
