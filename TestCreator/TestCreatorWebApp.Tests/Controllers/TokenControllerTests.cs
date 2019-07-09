@@ -324,5 +324,25 @@ namespace TestCreatorWebApp.Tests.Controllers
 
             Assert.IsInstanceOf<UnauthorizedResult>(controller.Auth(viewModel).Result);
         }
+
+        [Test]
+        public void Auth_InvalidViewModelWithRefreshTokenGrantType_ReturnsUnauthorizedResult()
+        {
+            TokenRequestViewModel viewModel = new TokenRequestViewModel
+            {
+                Username = null,
+                ClientId = null,
+                Password = "fehfuiyf8eywfkj",
+                GrantType = "refresh_token"
+            };
+
+            var mockTokenRepo = new Mock<ITokenRepository>();
+            mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
+                .Returns((Token)null);
+
+            var controller = new TokenController(null, mockTokenRepo.Object, null);
+
+            Assert.IsInstanceOf<UnauthorizedResult>(controller.Auth(viewModel).Result);
+        }
     }
 }

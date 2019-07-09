@@ -86,13 +86,10 @@ namespace TestCreatorWebApp.Controllers
 
             if (resultViewModel == null)
             {
-                return NotFound(new
-                {
-                    Error = $"Error during calculating results"
-                });
+                return new StatusCodeResult(500);
             }
 
-            return new JsonResult(viewModel, JsonSettings);
+            return new JsonResult(resultViewModel, JsonSettings);
         }
 
         /// <summary>
