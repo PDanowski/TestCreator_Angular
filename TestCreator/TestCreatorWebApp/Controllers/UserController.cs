@@ -36,7 +36,7 @@ namespace TestCreatorWebApp.Controllers
                 return BadRequest("User with given username already exists");
             }
 
-            user = await _userAndRoleRepository.GetUserByNameAsync(viewModel.UserName);
+            user = await _userAndRoleRepository.GetUserByEmailAsync(viewModel.Email);
             if (user != null)
             {
                 return BadRequest("User with given e-mail already exists");
