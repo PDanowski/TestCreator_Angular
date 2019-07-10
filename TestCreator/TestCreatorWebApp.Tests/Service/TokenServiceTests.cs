@@ -66,7 +66,7 @@ namespace TestCreatorWebApp.Tests.Service
         public void CreateAccessToken_ValidUserId_ReturnsToken()
         {
             var configuration = new Mock<IConfiguration>();
-            configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Key")]).Returns("------key------");
+            configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Key")]).Returns("------key123------");
             configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Issuer")]).Returns("issuer1");
             configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Audience")]).Returns("audience1");
 
@@ -90,14 +90,14 @@ namespace TestCreatorWebApp.Tests.Service
             var decodedToken = new JwtSecurityTokenHandler().ReadJwtToken(result.EncodedToken);
 
             Assert.AreEqual(decodedToken.Issuer, "issuer1");
-            Assert.AreEqual(decodedToken.Audiences, "audience1");
+            Assert.AreEqual(decodedToken.Audiences.First(), "audience1");
         }
 
         [Test]
         public void CreateAccessToken_NullArgument_ReturnsToken()
         {
             var configuration = new Mock<IConfiguration>();
-            configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Key")]).Returns("------key------");
+            configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Key")]).Returns("------key123------");
             configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Issuer")]).Returns("issuer1");
             configuration.SetupGet(x => x[It.Is<string>(s => s == "Auth:Jwt:Audience")]).Returns("audience1");
 
