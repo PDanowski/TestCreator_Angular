@@ -71,7 +71,7 @@ export class TestStartComponent {
 
       this.http.put<TestAttemptResult>(url, this.testAttempt).subscribe(result => {
         if (result) {
-            5this.testResult.putResult(result);
+            this.testResult.putResult(result);
             this.router.navigate(["test/result", result.TestId]);
           } else {
             console.log("Error during calculating results - redirecting to home...");
