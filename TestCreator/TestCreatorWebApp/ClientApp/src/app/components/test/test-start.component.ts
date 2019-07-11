@@ -1,7 +1,8 @@
 import { Component, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
+import { TestResultService } from '../../services/test.result.service';
 import { faArrowRight, faArrowLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -25,6 +26,7 @@ export class TestStartComponent {
     private router: Router,
     private http: HttpClient,
     public auth: AuthService,
+    public testResult: TestResultService,
     @Inject('BASE_URL') private baseUrl: string) {
 
     var id = +this.activatedRoute.snapshot.params["id"];
@@ -63,7 +65,21 @@ export class TestStartComponent {
   }
 
   onFinish() {
+    var url = this.baseUrl + "api/test/result";
 
+    if (this.testAttempt) {
+
+      this.http.put<TestAttemptResult>(url, this.testAttempt).subscribe(result => {
+        if (result) {
+            5this.testResult.putResult(result);
+            this.router.navigate(["test/result", result.TestId]);
+          } else {
+            console.log("Error during calculating results - redirecting to home...");
+            this.router.navigate(["home"]);
+          }
+        },
+        error => console.error(error));
+    }
   }
 
   handleChange(evt) {

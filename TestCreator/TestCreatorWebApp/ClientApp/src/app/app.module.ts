@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { TestResultService } from './services/test.result.service';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthResponseInterceptor } from './services/auth.response.interceptor';
 
@@ -15,6 +16,7 @@ import { HomeComponent } from './components/home/home.component';
 import { TestListComponent } from './components/test/test-list.component';
 import { TestComponent } from './components/test/test.component';
 import { TestStartComponent } from './components/test/test-start.component';
+import { TestResultComponent } from './components/test/test-result.component';
 import { TestEditComponent } from './components/test/test-edit.component';
 import { TestSearchComponent } from './components/test/test-search.component';
 import { TestSearchResultComponent } from './components/test/test-search-result.component';
@@ -37,6 +39,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
     TestListComponent,
     TestComponent,
     TestStartComponent,
+    TestResultComponent,
     TestEditComponent,
     TestSearchComponent,
     TestSearchResultComponent,
@@ -63,6 +66,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
       { path: 'test/create', component: TestEditComponent },
       { path: 'test/:id', component: TestComponent },
       { path: 'test/start/:id', component: TestStartComponent },
+      { path: 'test/result/:testId', component: TestResultComponent },
       { path: 'test/edit/:id', component: TestEditComponent },
       { path: 'test/search/:text', component: TestSearchResultComponent },
       { path: 'question/edit/:id', component: QuestionEditComponent },
@@ -78,6 +82,7 @@ import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.co
     ])
   ],
   providers: [
+    TestResultService,
     AuthService,
     {
       provide: HTTP_INTERCEPTORS,

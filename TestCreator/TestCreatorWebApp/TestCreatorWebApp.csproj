@@ -45,6 +45,7 @@
     <None Remove="ClientApp\src\app\components\result\result-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test-list.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-edit.component.ts" />
+    <None Remove="ClientApp\src\app\components\test\test-result.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-search-result.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-search.component.ts" />
     <None Remove="ClientApp\src\app\components\test\test-start.component.ts" />
@@ -55,13 +56,15 @@
     <None Remove="ClientApp\src\app\interfaces\Result.ts" />
     <None Remove="ClientApp\src\app\interfaces\test.attempt.answer.ts" />
     <None Remove="ClientApp\src\app\interfaces\test.attempt.entry.ts" />
+    <None Remove="ClientApp\src\app\interfaces\test.attempt.result.ts" />
     <None Remove="ClientApp\src\app\interfaces\test.attempt.ts" />
     <None Remove="ClientApp\src\app\interfaces\Test.ts" />
     <None Remove="ClientApp\src\app\interfaces\token.response.ts" />
     <None Remove="ClientApp\src\app\interfaces\user.ts" />
     <None Remove="ClientApp\src\app\services\auth.interceptor.ts" />
     <None Remove="ClientApp\src\app\services\auth.response.interceptor.ts" />
-    <None Remove="ClientApp\src\app\services\auth.service.ts" />  
+    <None Remove="ClientApp\src\app\services\auth.service.ts" />
+    <None Remove="ClientApp\src\app\services\test.result.service.ts" />  
   </ItemGroup>
 
   <ItemGroup>
@@ -80,12 +83,14 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test-start.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\test\test.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\test\test-result.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\user\register.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\answer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\question.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\result.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.answer.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.entry.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.result.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.attempt.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\test.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\token.response.ts" />
@@ -93,6 +98,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.response.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\test.result.service.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
