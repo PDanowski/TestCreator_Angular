@@ -76,7 +76,7 @@ export class AnswerEditComponent {
     var url = this.baseUrl + "api/answer";
 
     if (this.editMode) {
-
+      tempAnswer.Id = this.answer.Id;
       this.http.post<Answer>(url, tempAnswer).subscribe(result => {
           var v = result;
         console.log("Answer " + v.Id + " was updated");

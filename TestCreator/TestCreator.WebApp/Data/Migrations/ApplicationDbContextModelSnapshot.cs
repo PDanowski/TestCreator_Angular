@@ -322,7 +322,7 @@ namespace TestCreator.WebApp.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ClientId");
+                    b.Property<string>("ClientId");
 
                     b.Property<DateTime>("CreationDate");
 
