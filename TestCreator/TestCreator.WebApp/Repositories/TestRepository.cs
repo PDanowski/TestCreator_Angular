@@ -43,7 +43,7 @@ namespace TestCreatorWebApp.Repositories
                 TestId = test.Id,
                 Title = test.Title,
                 TestAttemptEntries = new List<TestAttemptEntryViewModel>()
-        };
+            };
 
             foreach (var question in test.Questions)
             {
