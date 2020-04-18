@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.ViewModels;
+﻿using System.Threading.Tasks;
+using TestCreator.WebApp.Data.Models;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Abstract
+namespace TestCreator.WebApp.Abstract
 {
     public interface IUserAndRoleRepository
     {

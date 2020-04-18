@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.Services;
-using TestCreatorWebApp.ViewModels;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.Services;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Tests.Service
+namespace TestCreator.Tests.Service
 {
     [TestFixture]
     public class TestServiceTests

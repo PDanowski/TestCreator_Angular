@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace TestCreatorWebApp.ViewModels
+namespace TestCreator.WebApp.ViewModels
 {
     [JsonObject(MemberSerialization.OptOut)]
     public class QuestionViewModel

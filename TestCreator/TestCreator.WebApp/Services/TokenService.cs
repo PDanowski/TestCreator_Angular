@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.Helpers;
-using TestCreatorWebApp.ViewModels;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.Data.Models;
+using TestCreator.WebApp.Helpers;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace TestCreatorWebApp.Services
+namespace TestCreator.WebApp.Services
 {
     public class TokenService : ITokenService
     {

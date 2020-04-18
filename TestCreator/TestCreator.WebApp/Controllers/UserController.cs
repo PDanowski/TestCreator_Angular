@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.Constants;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.ViewModels;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.Constants;
+using TestCreator.WebApp.Data.Models;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Controllers
+namespace TestCreator.WebApp.Controllers
 {
     public class UserController : BaseApiController
     {

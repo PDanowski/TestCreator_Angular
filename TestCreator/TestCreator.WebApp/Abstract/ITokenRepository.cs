@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.ViewModels;
+﻿using TestCreator.WebApp.Data.Models;
 
-namespace TestCreatorWebApp.Abstract
+namespace TestCreator.WebApp.Abstract
 {
     public interface ITokenRepository
     {

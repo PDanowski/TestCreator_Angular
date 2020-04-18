@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.Data;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.ViewModels;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.Data;
+using TestCreator.WebApp.Data.Models;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Repositories
+namespace TestCreator.WebApp.Repositories
 {
     public class UserAndRoleRepository : IUserAndRoleRepository
     {

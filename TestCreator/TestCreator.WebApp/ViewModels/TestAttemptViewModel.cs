@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace TestCreatorWebApp.ViewModels
+namespace TestCreator.WebApp.ViewModels
 {
     public class TestAttemptViewModel
     {

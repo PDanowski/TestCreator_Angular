@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.Controllers;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.Tests.Helpers;
-using TestCreatorWebApp.ViewModels;
+using TestCreator.Tests.Helpers;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.Controllers;
+using TestCreator.WebApp.Data.Models;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Tests.Controllers
+namespace TestCreator.Tests.Controllers
 {
     [TestFixture]
     public class ResultControllerTests

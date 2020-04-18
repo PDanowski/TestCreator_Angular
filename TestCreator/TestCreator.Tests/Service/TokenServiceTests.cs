@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Text;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.Services;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.Services;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace TestCreatorWebApp.Tests.Service
+namespace TestCreator.Tests.Service
 {
     [TestFixture]
     public class TokenServiceTests

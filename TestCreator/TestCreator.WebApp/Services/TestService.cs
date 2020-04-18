@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.ViewModels;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Services
+namespace TestCreator.WebApp.Services
 {
     public class TestService : ITestService
     {

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using TestCreatorWebApp.Data.Models;
-using TestCreatorWebApp.Helpers;
-using TestCreatorWebApp.ViewModels;
+﻿using System.Security.Claims;
+using TestCreator.WebApp.Data.Models;
+using TestCreator.WebApp.Helpers;
 
-namespace TestCreatorWebApp.Abstract
+namespace TestCreator.WebApp.Abstract
 {
     public interface ITokenService
     {

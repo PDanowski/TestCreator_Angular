@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using TestCreatorWebApp.Abstract;
-using TestCreatorWebApp.ViewModels;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+using TestCreator.WebApp.Abstract;
+using TestCreator.WebApp.ViewModels;
 
-namespace TestCreatorWebApp.Controllers
+namespace TestCreator.WebApp.Controllers
 {
     public class TokenController : BaseApiController
     {
