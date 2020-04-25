@@ -77,14 +77,14 @@ export class AnswerEditComponent {
 
     if (this.editMode) {
       tempAnswer.Id = this.answer.Id;
-      this.http.post<Answer>(url, tempAnswer).subscribe(result => {
+      this.http.put<Answer>(url, tempAnswer).subscribe(result => {
           var v = result;
         console.log("Answer " + v.Id + " was updated");
         this.router.navigate(["question/edit", tempAnswer.QuestionId]);
         },
         error => console.log(error));
     } else {
-      this.http.put<Answer>(url, tempAnswer).subscribe(result => {
+      this.http.post<Answer>(url, tempAnswer).subscribe(result => {
         var v = result;
         console.log("Answer " + v.Id + " was created");
         this.router.navigate(["question/edit", tempAnswer.QuestionId]);

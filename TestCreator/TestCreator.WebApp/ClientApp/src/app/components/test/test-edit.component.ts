@@ -100,14 +100,14 @@ export class TestEditComponent {
 
       tempTest.Id = this.test.Id;
 
-      this.http.post<Test>(url, tempTest).subscribe(result => {
+      this.http.put<Test>(url, tempTest).subscribe(result => {
           var res = result;
         console.log("Test " + res.Id + " was updated");
         this.router.navigate(["home"]);
         },
         error => console.error(error));
     } else {
-      this.http.put<Test>(url, tempTest).subscribe(result => {
+      this.http.post<Test>(url, tempTest).subscribe(result => {
         var res = result;
         console.log("Test " + res.Id + " was created");
           this.router.navigate(["home"]);

@@ -72,14 +72,14 @@ export class QuestionEditComponent {
 
       tempQuestion.Id = this.question.Id;
 
-      this.http.post<Question>(url, tempQuestion).subscribe(result => {
+      this.http.put<Question>(url, tempQuestion).subscribe(result => {
           var v = result;
           console.log("Question " + v.Id + " was updated");
         this.router.navigate(["test/edit", tempQuestion.TestId]);
         },
         error => console.log(error));
     } else {
-      this.http.put<Question>(url, tempQuestion).subscribe(result => {
+      this.http.post<Question>(url, tempQuestion).subscribe(result => {
         var v = result;
         console.log("Question " + v.Id + " was created");
         this.router.navigate(["test/edit", tempQuestion.TestId]);

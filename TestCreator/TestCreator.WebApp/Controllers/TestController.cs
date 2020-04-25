@@ -102,9 +102,15 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            viewModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var createdViewModel = _repository.CreateTest(viewModel);
-            return new JsonResult(createdViewModel, JsonSettings);
+            var updatedViewModel = _repository.UpdateTest(viewModel);
+            if (updatedViewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during updating test with identifier {viewModel.Id}"
+                });
+            }
+            return new JsonResult(updatedViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -120,15 +126,9 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var updatedViewModel = _repository.UpdateTest(viewModel);
-            if (updatedViewModel == null)
-            {
-                return NotFound(new
-                {
-                    Error = $"Error during updating test with identifier {viewModel.Id}"
-                });
-            }
-            return new JsonResult(updatedViewModel, JsonSettings);
+            viewModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var createdViewModel = _repository.CreateTest(viewModel);
+            return new JsonResult(createdViewModel, JsonSettings);
         }
 
         /// <summary>

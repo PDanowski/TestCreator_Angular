@@ -72,14 +72,14 @@ export class ResultEditComponent {
 
     if (this.editMode) {
 
-      this.http.post<Result>(url, tempResult).subscribe(res => {
+      this.http.put<Result>(url, tempResult).subscribe(res => {
         var v = res;
           console.log("Result " + v.Id + " was updated");
         this.router.navigate(["test/edit", tempResult.TestId]);
         },
         error => console.log(error));
     } else {
-      this.http.put<Result>(url, tempResult).subscribe(res => {
+      this.http.post<Result>(url, tempResult).subscribe(res => {
         var v = res;
         console.log("Result " + v.Id + " was created");
         this.router.navigate(["test/edit", tempResult.TestId]);

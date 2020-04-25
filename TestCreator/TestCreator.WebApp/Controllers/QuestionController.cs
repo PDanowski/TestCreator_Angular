@@ -50,8 +50,15 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var createdViewModel = _repository.CreateQuestion(viewModel);
-            return new JsonResult(createdViewModel, JsonSettings);
+            var updatedViewModel = _repository.UpdateQuestion(viewModel);
+            if (updatedViewModel == null)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during updating question with identifier {viewModel.Id}"
+                });
+            }
+            return new JsonResult(updatedViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -67,15 +74,8 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var updatedViewModel = _repository.UpdateQuestion(viewModel);
-            if (updatedViewModel == null)
-            {
-                return NotFound(new
-                {
-                    Error = $"Error during updating question with identifier {viewModel.Id}"
-                });
-            }
-            return new JsonResult(updatedViewModel, JsonSettings);
+            var createdViewModel = _repository.CreateQuestion(viewModel);
+            return new JsonResult(createdViewModel, JsonSettings);
         }
 
         /// <summary>
