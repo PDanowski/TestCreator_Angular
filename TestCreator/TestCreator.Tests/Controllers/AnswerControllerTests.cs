@@ -93,7 +93,7 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Put_CorrectViewModelGiven_ReturnsJsonViewModel()
+        public void Post_CorrectViewModelGiven_ReturnsJsonViewModel()
         {
             var viewModel = new AnswerViewModel
             {
@@ -106,41 +106,6 @@ namespace TestCreator.Tests.Controllers
 
 
             var controller = new AnswerController(mockRepo.Object);
-
-            var result = controller.Put(viewModel) as JsonResult;
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.GetObjectFromJsonResult<AnswerViewModel>().Text, viewModel.Text);
-            Assert.AreEqual(result.GetObjectFromJsonResult<AnswerViewModel>().Id, viewModel.Id);
-        }
-
-        [Test]
-        public void Put_InvalidViewModelGiven_ReturnsStatusCode500()
-        {
-            var mockRepo = new Mock<IAnswerRepository>();
-
-            var controller = new AnswerController(mockRepo.Object);
-
-            var result = controller.Put(null) as StatusCodeResult;
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.StatusCode, 500);
-        }
-
-        [Test]
-        public void Post_CorrectViewModelGiven_ReturnsJsonViewModel()
-        {
-            var viewModel = new AnswerViewModel
-            {
-                Id = 1,
-                Text = "Text1"
-            };
-
-            var mockRepo = new Mock<IAnswerRepository>();
-            mockRepo.Setup(x => x.UpdateAnswer(It.IsAny<AnswerViewModel>())).Returns(viewModel);
-
-            var controller =
-                new AnswerController(mockRepo.Object);
 
             var result = controller.Post(viewModel) as JsonResult;
 
@@ -163,7 +128,42 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Post_CorrectViewModelErrorDuringProcessing_ReturnsNotFound()
+        public void Put_CorrectViewModelGiven_ReturnsJsonViewModel()
+        {
+            var viewModel = new AnswerViewModel
+            {
+                Id = 1,
+                Text = "Text1"
+            };
+
+            var mockRepo = new Mock<IAnswerRepository>();
+            mockRepo.Setup(x => x.UpdateAnswer(It.IsAny<AnswerViewModel>())).Returns(viewModel);
+
+            var controller =
+                new AnswerController(mockRepo.Object);
+
+            var result = controller.Put(viewModel) as JsonResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.GetObjectFromJsonResult<AnswerViewModel>().Text, viewModel.Text);
+            Assert.AreEqual(result.GetObjectFromJsonResult<AnswerViewModel>().Id, viewModel.Id);
+        }
+
+        [Test]
+        public void Put_InvalidViewModelGiven_ReturnsStatusCode500()
+        {
+            var mockRepo = new Mock<IAnswerRepository>();
+
+            var controller = new AnswerController(mockRepo.Object);
+
+            var result = controller.Put(null) as StatusCodeResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 500);
+        }
+
+        [Test]
+        public void Put_CorrectViewModelErrorDuringProcessing_ReturnsNotFound()
         {
             var viewModel = new AnswerViewModel
             {
@@ -176,7 +176,7 @@ namespace TestCreator.Tests.Controllers
 
             var controller = new AnswerController(mockRepo.Object);
 
-            var result = controller.Post(viewModel);
+            var result = controller.Put(viewModel);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
