@@ -62,7 +62,7 @@ export class RegisterComponent {
 
     var url = this.baseUrl + "api/user";
 
-    this.http.put<User>(url, tempUser).subscribe(result => {
+    this.http.post<User>(url, tempUser).subscribe(result => {
         if (result) {
           var res = result;
           console.log("User " + res.Username + " was successfully created");

@@ -14,7 +14,7 @@ namespace TestCreator.Tests.Controllers
     public class UserControllerTests
     {
         [Test]
-        public void Put_CorrectViewModelGivenUserDoesntExist_ReturnsJsonViewModel()
+        public void Post_CorrectViewModelGivenUserDoesntExist_ReturnsJsonViewModel()
         {
             var viewModel = new UserViewModel
             {
@@ -33,7 +33,7 @@ namespace TestCreator.Tests.Controllers
 
             var controller = new UserController(mockRepo.Object);
 
-            var result = controller.Put(viewModel).Result as JsonResult;
+            var result = controller.Post(viewModel).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetObjectFromJsonResult<UserViewModel>().Email, viewModel.Email);
@@ -41,7 +41,7 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Put_CorrectViewModelGivenUserWithNameExists_ReturnsJsonViewModel()
+        public void Post_CorrectViewModelGivenUserWithNameExists_ReturnsJsonViewModel()
         {
             var viewModel = new UserViewModel
             {
@@ -65,13 +65,13 @@ namespace TestCreator.Tests.Controllers
 
             var controller = new UserController(mockRepo.Object);
 
-            var result = controller.Put(viewModel).Result as BadRequestObjectResult;
+            var result = controller.Post(viewModel).Result as BadRequestObjectResult;
 
             Assert.IsNotNull(result);
         }
 
         [Test]
-        public void Put_CorrectViewModelGivenUserWithEmailExists_ReturnsJsonViewModel()
+        public void Post_CorrectViewModelGivenUserWithEmailExists_ReturnsJsonViewModel()
         {
             var viewModel = new UserViewModel
             {
@@ -95,19 +95,19 @@ namespace TestCreator.Tests.Controllers
 
             var controller = new UserController(mockRepo.Object);
 
-            var result = controller.Put(viewModel).Result as BadRequestObjectResult;
+            var result = controller.Post(viewModel).Result as BadRequestObjectResult;
 
             Assert.IsNotNull(result);
         }
 
         [Test]
-        public void Put_InvalidViewModelGiven_ReturnsStatusCode500()
+        public void Post_InvalidViewModelGiven_ReturnsStatusCode500()
         {
             var mockRepo = new Mock<IUserAndRoleRepository>();
 
             var controller = new UserController(mockRepo.Object);
 
-            var result = controller.Put(null).Result as StatusCodeResult;
+            var result = controller.Post(null).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);

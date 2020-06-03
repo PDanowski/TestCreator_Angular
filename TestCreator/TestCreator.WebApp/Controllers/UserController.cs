@@ -17,11 +17,11 @@ namespace TestCreator.WebApp.Controllers
         }
 
         /// <summary>
-        /// PUT: api/user/put
+        /// POST: api/user/put
         /// </summary>
         /// <param name="viewModel">UserViewModel with data</param>
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody]UserViewModel viewModel)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody]UserViewModel viewModel)
         {
             if (viewModel == null)
             {
