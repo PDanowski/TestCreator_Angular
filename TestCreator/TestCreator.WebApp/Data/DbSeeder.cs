@@ -110,7 +110,7 @@ namespace TestCreator.WebApp.Data
                 var question = new Question
                 {
                     TestId = test.Id,
-                    Text = $"Sample qeustion {i+1}",
+                    Text = $"Sample question {i+1}",
                     CreationDate = createdDate,
                     LastModificationDate = createdDate
                 };
@@ -120,7 +120,7 @@ namespace TestCreator.WebApp.Data
 
                 for (int j = 0; j < numberOfAnswersPerQuestions; j++)
                 {
-                    var a1 = context.Answers.Add(new Answer
+                    context.Answers.Add(new Answer
                     {
                         QuestionId = question.Id,
                         Text = $"Sample answer {j + 1}",
