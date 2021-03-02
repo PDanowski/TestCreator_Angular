@@ -14,7 +14,7 @@
       <li class="list-group-item" *ngFor="let test of tests"
           [class.selected]="test === selectedTest"
           (click)="onSelect(test)">
-        <img src="https://lorempixel.com/50/50/?randon={{test.Id}}" alt="{{test.Title}}" class="rounded-circle"/>
+        <img src="https://lorempixel.com/50/50/?random={{test.Id}}" alt="{{test.Title}}" class="rounded-circle"/>
         <span>{{test.Title}}</span>
       </li>
     </ul>
