@@ -1,8 +1,9 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { EventEmitter, Inject, Injectable, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 //returns true for browser
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
 import { map, catchError } from 'rxjs/operators';
 
 
@@ -83,7 +84,7 @@ export class AuthService {
         return true;
       }
 
-      return Observable.throw('Unauthorized');
+      return observableThrowError('Unauthorized');
     }), catchError((err, caught) => { return new Observable<any>(err) }));
   }
 }

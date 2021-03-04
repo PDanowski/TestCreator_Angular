@@ -1,10 +1,11 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { Injector, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   HttpClient, HttpHandler, HttpInterceptor,
   HttpEvent, HttpRequest, HttpResponse, HttpErrorResponse
 } from "@angular/common/http";
-import { Observable } from "rxjs";
 import { map, catchError, filter, tap, flatMap, mergeMap } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
@@ -63,6 +64,6 @@ export class AuthResponseInterceptor implements HttpInterceptor {
         }));
       }
     }
-    return Observable.throw(error);
+    return observableThrowError(error);
   }
 }
