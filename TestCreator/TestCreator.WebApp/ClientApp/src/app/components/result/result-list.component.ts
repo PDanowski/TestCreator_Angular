@@ -2,6 +2,8 @@ import { Component, Inject, Input, OnChanges, SimpleChanges } from "@angular/cor
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Result } from 'src/app/interfaces/result';
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
   selector: "result-list",

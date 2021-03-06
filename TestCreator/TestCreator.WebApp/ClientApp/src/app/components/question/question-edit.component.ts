@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { FormGroup, FormControl, FormBuilder, Validators } from "@angular/forms";
+import { Question } from 'src/app/interfaces/question';
 
 @Component({
   selector: "question-edit",

@@ -2,6 +2,7 @@ import { Component, Inject, Input, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { faRandom, faFire, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons';
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
   selector: "test-list",

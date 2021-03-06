@@ -4,6 +4,9 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
 import { TestResultService } from '../../services/test.result.service';
 import { faArrowRight, faArrowLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { TestAttempt } from 'src/app/interfaces/test.attempt';
+import { TestAttemptEntry } from 'src/app/interfaces/test.attempt.entry';
+import { TestAttemptResult } from 'src/app/interfaces/test.attempt.result';
 
 @Component({
   selector: "test-start",

@@ -2,6 +2,8 @@ import { Component, Inject, Input, OnChanges, SimpleChanges } from "@angular/cor
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Answer } from 'src/app/interfaces/answer';
+import { Question } from 'src/app/interfaces/question';
 
 @Component({
   selector: "answer-list",

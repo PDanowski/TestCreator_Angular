@@ -5,6 +5,7 @@ import { isPlatformBrowser } from "@angular/common";
 //returns true for browser
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { map, catchError } from 'rxjs/operators';
+import { TokenResponse } from 'src/app/interfaces/token.response';
 
 
 @Injectable()

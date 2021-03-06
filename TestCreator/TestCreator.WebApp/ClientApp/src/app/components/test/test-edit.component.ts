@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { FormGroup, FormControl, FormBuilder, Validators } from "@angular/forms";
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
   selector: "test-edit",

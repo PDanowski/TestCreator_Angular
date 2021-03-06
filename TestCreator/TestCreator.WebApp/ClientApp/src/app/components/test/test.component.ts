@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
 import { faAlignJustify, faChartBar, faShare, faPlay, faHome } from '@fortawesome/free-solid-svg-icons';
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
   selector: "test",

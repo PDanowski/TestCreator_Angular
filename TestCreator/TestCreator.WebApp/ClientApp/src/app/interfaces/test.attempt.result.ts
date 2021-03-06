@@ -1,4 +1,4 @@
-interface TestAttemptResult {
+export interface TestAttemptResult {
   TestId: number;
   Title: string;
   Score: number;
