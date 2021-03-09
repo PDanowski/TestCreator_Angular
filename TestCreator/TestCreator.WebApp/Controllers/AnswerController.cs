@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TestCreator.WebApp.Abstract;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,16 +21,15 @@ namespace TestCreator.WebApp.Controllers
         }
 
         /// <summary>
-        /// GET: api/answer/all
+        /// GET: api/answer/
         /// </summary>
-        /// <param name="questionId"></param>
         /// <returns>All AnswerViewModel for given {questionId}</returns>
-        [HttpGet("All/{questionId}")]
-        public IActionResult All(int questionId)
+        [HttpGet]
+        public IActionResult GetByQuestionId([Required][FromQuery(Name = "questionId")] int questionId)
         {
-            var viewModels = _repository.GetAnswers(questionId);
+            var answers = _repository.GetAnswers(questionId);
 
-            if (viewModels == null)
+            if (answers == null)
             {
                 return NotFound(new
                 {
@@ -34,7 +37,7 @@ namespace TestCreator.WebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModels, JsonSettings);
+            return new JsonResult(answers.Adapt<List<AnswerViewModel>>(), JsonSettings);
         }
 
         /// <summary>
@@ -45,9 +48,9 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var viewModel = _repository.GetAnswer(id);
+            var answer = _repository.GetAnswer(id);
 
-            if (viewModel == null)
+            if (answer == null)
             {
                 return NotFound(new
                 {
@@ -55,7 +58,7 @@ namespace TestCreator.WebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModel, JsonSettings);
+            return new JsonResult(answer.Adapt<AnswerViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -71,15 +74,15 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var updatedViewModel = _repository.UpdateAnswer(viewModel);
-            if (updatedViewModel == null)
+            var updatedAnswer = _repository.UpdateAnswer(viewModel.Adapt<Answer>());
+            if (updatedAnswer == null)
             {
                 return NotFound(new
                 {
                     Error = $"Error during updating answer with identifier {viewModel.Id}"
                 });
             }
-            return new JsonResult(updatedViewModel, JsonSettings);
+            return new JsonResult(updatedAnswer.Adapt<AnswerViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -95,8 +98,8 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var createdViewModel = _repository.CreateAnswer(viewModel);
-            return new JsonResult(createdViewModel, JsonSettings);
+            var createdAnswer = _repository.CreateAnswer(viewModel.Adapt<Answer>());
+            return new JsonResult(createdAnswer.Adapt<AnswerViewModel>(), JsonSettings);
         }
 
         /// <summary>

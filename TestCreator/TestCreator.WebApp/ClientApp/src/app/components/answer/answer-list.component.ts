@@ -42,7 +42,7 @@ export class AnswerListComponent {
 
   loadData() {
 
-    var url = this.baseUrl + "api/answer/all/" + this.question.Id;
+    var url = this.baseUrl + "api/answer?questionId=" + this.question.Id;
 
     this.http.get<Answer[]>(url).subscribe(result => {
       this.answers = result;

@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using TestCreator.WebApp.Abstract;
-using TestCreator.WebApp.Constants;
-using TestCreator.WebApp.Data.Models;
+using TestCreator.Data.Constants;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.WebApp.Controllers
@@ -40,9 +41,10 @@ namespace TestCreator.WebApp.Controllers
                 return BadRequest("User with given e-mail already exists");
             }
 
-            var createdUser = await _userAndRoleRepository.CreateUserAndAddToRolesAsync(viewModel, new[] {UserRoles.RegisteredUser});
+            var createdUser = await _userAndRoleRepository.CreateUserAndAddToRolesAsync(viewModel.Adapt<ApplicationUser>(), 
+                new[] {UserRoles.RegisteredUser});
 
-            return Json(createdUser, JsonSettings);
+            return Json(createdUser.Adapt<UserViewModel>(), JsonSettings);
         }
     }
 }

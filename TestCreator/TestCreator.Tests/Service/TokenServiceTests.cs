@@ -4,8 +4,8 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
-using TestCreator.WebApp.Abstract;
 using TestCreator.WebApp.Services;
+using TestCreator.WebApp.Services.Interfaces;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace TestCreator.Tests.Service

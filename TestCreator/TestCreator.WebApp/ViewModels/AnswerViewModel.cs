@@ -14,7 +14,7 @@ namespace TestCreator.WebApp.ViewModels
 
         public int Id { get; set; }
         public int QuestionId { get; set; }
-        public int QuizId { get; set; }
+        public int TestId { get; set; }
         public string Text { get; set; }
         public string Notes { get; set; }
         [DefaultValue(0)]

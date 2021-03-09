@@ -4,18 +4,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using TestCreator.WebApp.Abstract;
-using TestCreator.WebApp.Data;
-using TestCreator.WebApp.Data.Models;
-using TestCreator.WebApp.Repositories;
+using TestCreator.Data.Context;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories;
+using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Converters;
+using TestCreator.WebApp.Converters.Interfaces;
 using TestCreator.WebApp.Services;
+using TestCreator.WebApp.Services.Interfaces;
 
 namespace TestCreator.WebApp
 {
@@ -82,8 +84,9 @@ namespace TestCreator.WebApp
 
 
             //register dependencies
+            services.Add(new ServiceDescriptor(typeof(ITestAttemptViewModelConverter), typeof(TestAttemptViewModelConverter), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITokenService), typeof(TokenService), ServiceLifetime.Scoped));
-            services.Add(new ServiceDescriptor(typeof(ITestService), typeof(TestService), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ITestCalculationService), typeof(TestCalculationService), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IUserAndRoleRepository), typeof(UserAndRoleRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITestRepository), typeof(TestRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IResultRepository), typeof(ResultRepository), ServiceLifetime.Scoped));

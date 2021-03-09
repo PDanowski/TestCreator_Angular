@@ -32,8 +32,8 @@ export class TestSearchResultComponent {
 
     if (searchedPhrase) {
       this.title += searchedPhrase;
-      var url = this.baseUrl + "api/test/Search/";
-      let params = new HttpParams().set("text", searchedPhrase);
+      var url = this.baseUrl + "api/test";
+      let params = new HttpParams().set("keyword", searchedPhrase);
 
       this.http.get<Test[]>(url, { params: params }).subscribe(result => {
           this.tests = result;

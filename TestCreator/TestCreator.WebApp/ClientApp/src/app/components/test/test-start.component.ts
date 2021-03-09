@@ -36,7 +36,7 @@ export class TestStartComponent {
     console.log(id);
 
     if (id) {
-      var url = this.baseUrl + "api/test/start/" + id;
+      var url = this.baseUrl + "api/testAttempt/" + id;
       this.http.get<TestAttempt>(url).subscribe(result => {
         this.testAttempt = result;
         this.title = this.testAttempt.Title;
@@ -68,11 +68,11 @@ export class TestStartComponent {
   }
 
   onFinish() {
-    var url = this.baseUrl + "api/test/result";
+    var url = this.baseUrl + "api/testAttempt";
 
     if (this.testAttempt) {
 
-      this.http.put<TestAttemptResult>(url, this.testAttempt).subscribe(result => {
+      this.http.post<TestAttemptResult>(url, this.testAttempt).subscribe(result => {
         if (result) {
             this.testResult.putResult(result);
             this.router.navigate(["test/result", result.TestId]);

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCreator.WebApp", "TestC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCreator.Tests", "TestCreator.Tests\TestCreator.Tests.csproj", "{B8C71738-278C-49E4-B24A-1F6CF1119C0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCreator.Data", "TestCreator.Data\TestCreator.Data.csproj", "{DC113607-B2CA-4503-854E-AC0D121F1020}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,12 +23,16 @@ Global
 		{B8C71738-278C-49E4-B24A-1F6CF1119C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8C71738-278C-49E4-B24A-1F6CF1119C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8C71738-278C-49E4-B24A-1F6CF1119C0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC113607-B2CA-4503-854E-AC0D121F1020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC113607-B2CA-4503-854E-AC0D121F1020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC113607-B2CA-4503-854E-AC0D121F1020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC113607-B2CA-4503-854E-AC0D121F1020}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		LessCompiler = 94b33a41-ef7e-4a07-b67b-49b9bddedd25
 		SolutionGuid = {701DC366-84B1-4FA8-BB30-959E6D7F21C1}
+		LessCompiler = 94b33a41-ef7e-4a07-b67b-49b9bddedd25
 	EndGlobalSection
 EndGlobal

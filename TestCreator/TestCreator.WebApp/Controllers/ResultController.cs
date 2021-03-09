@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TestCreator.WebApp.Abstract;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,9 +28,9 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var viewModel = _repository.GetResult(id);
+            var result = _repository.GetResult(id);
 
-            if (viewModel == null)
+            if (result == null)
             {
                 return NotFound(new
                 {
@@ -34,7 +38,7 @@ namespace TestCreator.WebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModel, JsonSettings);
+            return new JsonResult(result.Adapt<ResultViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -50,15 +54,15 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var updatedViewModel = _repository.UpdateResult(viewModel);
-            if (updatedViewModel == null)
+            var updatedResult = _repository.UpdateResult(viewModel.Adapt<Result>());
+            if (updatedResult == null)
             {
                 return NotFound(new
                 {
                     Error = $"Error during updating result with identifier {viewModel.Id}"
                 });
             }
-            return new JsonResult(updatedViewModel, JsonSettings);
+            return new JsonResult(updatedResult.Adapt<ResultViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -74,8 +78,8 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            var createdViewModel = _repository.CreateResult(viewModel);
-            return new JsonResult(createdViewModel, JsonSettings);
+            var createdResult = _repository.CreateResult(viewModel.Adapt<Result>());
+            return new JsonResult(createdResult.Adapt<ResultViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -97,16 +101,16 @@ namespace TestCreator.WebApp.Controllers
         }
 
         /// <summary>
-        /// GET: api/result/all
+        /// GET: api/result
         /// </summary>
         /// <param name="testId"></param>
-        /// <returns>All ResultViewModel for given {quizId}</returns>
-        [HttpGet("All/{testId}")]
-        public IActionResult All(int testId)
+        /// <returns>All ResultViewModel for given {testId}</returns>
+        [HttpGet]
+        public IActionResult GetByTestId([Required][FromQuery(Name = "testId")] int testId)
         {
-            var viewModels = _repository.GetResults(testId);
+            var results = _repository.GetResults(testId);
 
-            if (viewModels == null)
+            if (results == null)
             {
                 return NotFound(new
                 {
@@ -114,9 +118,7 @@ namespace TestCreator.WebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModels, JsonSettings);
+            return new JsonResult(results.Adapt<List<ResultViewModel>>(), JsonSettings);
         }
-
-
     }
 }

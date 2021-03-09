@@ -25,20 +25,20 @@ export class TestListComponent implements OnInit {
 
     console.log("TestListComponent create using " + this.class + " class.");
 
-    var url = this.baseUrl + "api/test/";
+    var url = this.baseUrl + "api/test?sorting=";
 
     switch (this.class) {
     case "latest":
     default:
-      url += "latest";
+      url += "1";
       this.title = "Latest tests";
       break;
     case "random":
-      url += "random";
+      url += "0";
       this.title = "Random tests";
       break;
     case "byTitle":
-      url += "byTitle";
+      url += "2";
       this.title = "Tests sorted by title";
       break;
     }

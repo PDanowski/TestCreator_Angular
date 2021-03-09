@@ -42,7 +42,7 @@ export class ResultListComponent {
 
   loadData() {
 
-    var url = this.baseUrl + "api/result/all/" + this.test.Id;
+    var url = this.baseUrl + "api/result?testId=" + this.test.Id;
 
     this.http.get<Result[]>(url).subscribe(result => {
         this.results = result;
