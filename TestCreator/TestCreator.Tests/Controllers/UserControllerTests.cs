@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
-using TestCreator.WebApp.Abstract;
 using TestCreator.WebApp.Controllers;
-using TestCreator.WebApp.Data.Models;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers
@@ -13,65 +14,44 @@ namespace TestCreator.Tests.Controllers
     [TestFixture]
     public class UserControllerTests
     {
-        [Test]
-        public void Post_CorrectViewModelGivenUserDoesntExist_ReturnsJsonViewModel()
+        private Mock<IUserAndRoleRepository> _mockRepo;
+
+        private UserController _sut;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            var viewModel = new UserViewModel
-            {
-                Email = "user1@wp.pl",
-                UserName = "user1",
-                Password = "password123"
-            };
-
-            var mockRepo = new Mock<IUserAndRoleRepository>();
-            mockRepo.Setup(x => x.CreateUserAndAddToRolesAsync(It.IsAny<UserViewModel>(), It.IsAny<string[]>()))
-                .Returns(Task.FromResult(viewModel));
-            mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult((ApplicationUser)null));
-            mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult((ApplicationUser)null));
-
-            var controller = new UserController(mockRepo.Object);
-
-            var result = controller.Post(viewModel).Result as JsonResult;
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.GetObjectFromJsonResult<UserViewModel>().Email, viewModel.Email);
-            Assert.AreEqual(result.GetObjectFromJsonResult<UserViewModel>().UserName, viewModel.UserName);
+            _mockRepo = new Mock<IUserAndRoleRepository>();
+            _sut = new UserController(_mockRepo.Object);
         }
 
         [Test]
-        public void Post_CorrectViewModelGivenUserWithNameExists_ReturnsJsonViewModel()
+        public void Post_WhenCorrectViewModelGivenUserDoesNotExist_ShouldReturnJsonViewModel()
         {
-            var viewModel = new UserViewModel
+            var applicationUser = new ApplicationUser
             {
                 Email = "user1@wp.pl",
-                UserName = "user1",
-                Password = "password123"
-            };
-            var user = new ApplicationUser
-            {
-                UserName = viewModel.UserName,
-                Email = viewModel.Email
+                UserName = "user1"
             };
 
-            var mockRepo = new Mock<IUserAndRoleRepository>();
-            mockRepo.Setup(x => x.CreateUserAndAddToRolesAsync(It.IsAny<UserViewModel>(), It.IsAny<string[]>()))
-                .Returns(Task.FromResult(viewModel));
-            mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(user));
-            mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
+            _mockRepo.Setup(x => x.CreateUserAndAddToRolesAsync(It.Is<ApplicationUser>(u => u.Email == "user1@wp.pl"), 
+                    It.IsAny<string[]>()))
+                .Returns(Task.FromResult(applicationUser));
+            _mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((ApplicationUser)null));
+            _mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult((ApplicationUser)null));
 
-            var controller = new UserController(mockRepo.Object);
-
-            var result = controller.Post(viewModel).Result as BadRequestObjectResult;
+            var result = _sut.Post(applicationUser.Adapt<UserViewModel>()).Result as JsonResult;
 
             Assert.IsNotNull(result);
+            var viewModel = result.GetObjectFromJsonResult<UserViewModel>();
+            Assert.AreEqual(viewModel.Email, applicationUser.Email);
+            Assert.AreEqual(viewModel.UserName, applicationUser.UserName);
         }
 
         [Test]
-        public void Post_CorrectViewModelGivenUserWithEmailExists_ReturnsJsonViewModel()
+        public void Post_WhenCorrectViewModelGivenUserWithNameExists_ShouldReturnJsonViewModel()
         {
             var viewModel = new UserViewModel
             {
@@ -85,29 +65,49 @@ namespace TestCreator.Tests.Controllers
                 Email = viewModel.Email
             };
 
-            var mockRepo = new Mock<IUserAndRoleRepository>();
-            mockRepo.Setup(x => x.CreateUserAndAddToRolesAsync(It.IsAny<UserViewModel>(), It.IsAny<string[]>()))
-                .Returns(Task.FromResult(viewModel));
-            mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult((ApplicationUser)null));
-            mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
+            _mockRepo.Setup(x => x.CreateUserAndAddToRolesAsync(user, It.IsAny<string[]>()))
                 .Returns(Task.FromResult(user));
+            _mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(user));
+            _mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((ApplicationUser)null));
 
-            var controller = new UserController(mockRepo.Object);
-
-            var result = controller.Post(viewModel).Result as BadRequestObjectResult;
+            var result = _sut.Post(viewModel).Result as BadRequestObjectResult;
 
             Assert.IsNotNull(result);
         }
 
         [Test]
-        public void Post_InvalidViewModelGiven_ReturnsStatusCode500()
+        public void Post_WhenCorrectViewModelGivenUserWithEmailExists_ShouldReturnJsonViewModel()
         {
-            var mockRepo = new Mock<IUserAndRoleRepository>();
+            var viewModel = new UserViewModel
+            {
+                Email = "user1@wp.pl",
+                UserName = "user1",
+                Password = "password123"
+            };
+            var user = new ApplicationUser
+            {
+                UserName = viewModel.UserName,
+                Email = viewModel.Email
+            };
 
-            var controller = new UserController(mockRepo.Object);
+            _mockRepo.Setup(x => x.CreateUserAndAddToRolesAsync(user, It.IsAny<string[]>()))
+                .Returns(Task.FromResult(user));
+            _mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((ApplicationUser)null));
+            _mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(user));
 
-            var result = controller.Post(null).Result as StatusCodeResult;
+            var result = _sut.Post(viewModel).Result as BadRequestObjectResult;
+
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Post_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
+        {
+            var result = _sut.Post(null).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);

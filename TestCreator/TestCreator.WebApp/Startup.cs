@@ -4,17 +4,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using TestCreator.WebApp.Abstract;
-using TestCreator.WebApp.Data;
-using TestCreator.WebApp.Data.Models;
-using TestCreator.WebApp.Repositories;
+using TestCreator.Data.Context;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories;
+using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Converters;
+using TestCreator.WebApp.Converters.Interfaces;
 using TestCreator.WebApp.Services;
+using TestCreator.WebApp.Services.Interfaces;
 
 namespace TestCreator.WebApp
 {
@@ -30,9 +33,7 @@ namespace TestCreator.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddEntityFrameworkSqlServer();
+            services.AddControllers().AddNewtonsoftJson();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 {
@@ -83,8 +84,9 @@ namespace TestCreator.WebApp
 
 
             //register dependencies
+            services.Add(new ServiceDescriptor(typeof(ITestAttemptViewModelConverter), typeof(TestAttemptViewModelConverter), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITokenService), typeof(TokenService), ServiceLifetime.Scoped));
-            services.Add(new ServiceDescriptor(typeof(ITestService), typeof(TestService), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ITestCalculationService), typeof(TestCalculationService), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IUserAndRoleRepository), typeof(UserAndRoleRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITestRepository), typeof(TestRepository), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(IResultRepository), typeof(ResultRepository), ServiceLifetime.Scoped));
@@ -94,7 +96,7 @@ namespace TestCreator.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -130,15 +132,14 @@ namespace TestCreator.WebApp
 
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action}/{id?}");
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                //endpoints.MapFallbackToController("Index", "Home");
             });
 
             app.UseSpa(spa =>
@@ -160,7 +161,8 @@ namespace TestCreator.WebApp
                 var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
                 var userManager = serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
 
-                context.Database.Migrate();
+                context?.Database.EnsureCreated();
+                context?.Database.Migrate();
 
                 DbSeeder.Seed(context, roleManager, userManager);
             }

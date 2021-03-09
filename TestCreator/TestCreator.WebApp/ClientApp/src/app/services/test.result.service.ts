@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { Router } from "@angular/router";
+import { TestAttemptResult } from 'src/app/interfaces/test.attempt.result';
 
 @Injectable()
 export class TestResultService {

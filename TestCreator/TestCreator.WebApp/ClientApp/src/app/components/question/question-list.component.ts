@@ -2,6 +2,8 @@ import { Component, Inject, Input, OnChanges, SimpleChanges } from "@angular/cor
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Question } from 'src/app/interfaces/question';
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
   selector: "question-list",
@@ -40,7 +42,7 @@ export class QuestionListComponent {
 
   loadData() {
 
-    var url = this.baseUrl + "api/question/all/" + this.test.Id;
+    var url = this.baseUrl + "api/question?testId=" + this.test.Id;
 
     this.http.get<Question[]>(url).subscribe(result => {
         this.questions = result;

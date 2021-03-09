@@ -4,9 +4,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using TestCreator.WebApp.Abstract;
-using TestCreator.WebApp.Data.Models;
+using TestCreator.Data.Models;
 using TestCreator.WebApp.Helpers;
+using TestCreator.WebApp.Services.Interfaces;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace TestCreator.WebApp.Services

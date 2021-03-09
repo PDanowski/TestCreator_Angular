@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using TestCreator.WebApp.Abstract;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.Controllers;
-using TestCreator.WebApp.Data.Models;
 using TestCreator.WebApp.Helpers;
+using TestCreator.WebApp.Services.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers

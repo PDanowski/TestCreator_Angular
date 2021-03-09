@@ -2,6 +2,7 @@ import { Component, Inject, Input } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router, ActivatedRoute } from "@angular/router";
 import { faListUl } from '@fortawesome/free-solid-svg-icons';
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
     selector: "test-search-result",
@@ -31,8 +32,8 @@ export class TestSearchResultComponent {
 
     if (searchedPhrase) {
       this.title += searchedPhrase;
-      var url = this.baseUrl + "api/test/Search/";
-      let params = new HttpParams().set("text", searchedPhrase);
+      var url = this.baseUrl + "api/test";
+      let params = new HttpParams().set("keyword", searchedPhrase);
 
       this.http.get<Test[]>(url, { params: params }).subscribe(result => {
           this.tests = result;

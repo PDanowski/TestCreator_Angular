@@ -1,9 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TestCreator.WebApp.Abstract;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.Data.Repositories.Params;
+using TestCreator.WebApp.Controllers.Attributes;
+using TestCreator.WebApp.Converters.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,12 +17,12 @@ namespace TestCreator.WebApp.Controllers
     public class TestController : BaseApiController
     {
         private readonly ITestRepository _repository;
-        private readonly ITestService _service;
 
-        public TestController(ITestRepository testRepository, ITestService service)
+        private int _defaultQuerySize = 10;
+
+        public TestController(ITestRepository testRepository)
         {
             this._repository = testRepository;
-            this._service = service;
         }
 
         /// <summary>
@@ -29,9 +33,9 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var viewModel = _repository.GetTest(id);
+            var test = _repository.GetTest(id);
 
-            if (viewModel == null)
+            if (test == null)
             {
                 return NotFound(new
                 {
@@ -39,54 +43,7 @@ namespace TestCreator.WebApp.Controllers
                 });
             }
 
-            return new JsonResult(viewModel, JsonSettings);
-        }
-
-        /// <summary>
-        /// GET: api/test/start/{id}
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Single TestAttemptViewModel with given {id}</returns>
-        [HttpGet("start/{id}")]
-        public IActionResult Start(int id)
-        {
-            var viewModel = _repository.StartTest(id);
-
-            if (viewModel == null)
-            {
-                return NotFound(new
-                {
-                    Error = $"Test with identifier {id} was not found"
-                });
-            }
-
-            return new JsonResult(viewModel, JsonSettings);
-        }
-
-        /// <summary>
-        /// PUT: api/test/result
-        /// </summary>
-        /// <param name="viewModel">TestAttemptViewModel with data</param>
-        /// <returns>Calculate result and return TestAttemptResultViewModel for given {viewModel}</returns>
-        [HttpPut("Result")]
-        public IActionResult Result([FromBody]TestAttemptViewModel viewModel)
-        {
-            if (viewModel == null)
-            {
-                return NotFound(new
-                {
-                    Error = $"Error - argument is NULL"
-                });
-            }
-
-            var resultViewModel = _service.CalculateResult(viewModel);
-
-            if (resultViewModel == null)
-            {
-                return new StatusCodeResult(500);
-            }
-
-            return new JsonResult(resultViewModel, JsonSettings);
+            return new JsonResult(test.Adapt<TestViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -94,23 +51,22 @@ namespace TestCreator.WebApp.Controllers
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
         [HttpPut]
-        [Authorize]
-        public IActionResult Put([FromBody]TestViewModel viewModel)
+        public IActionResult Put([FromBody] TestViewModel viewModel)
         {
             if (viewModel == null)
             {
                 return new StatusCodeResult(500);
             }
 
-            var updatedViewModel = _repository.UpdateTest(viewModel);
-            if (updatedViewModel == null)
+            var updatedTest = _repository.UpdateTest(viewModel.Adapt<Test>());
+            if (updatedTest == null)
             {
                 return NotFound(new
                 {
                     Error = $"Error during updating test with identifier {viewModel.Id}"
                 });
             }
-            return new JsonResult(updatedViewModel, JsonSettings);
+            return new JsonResult(updatedTest.Adapt<TestViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -126,9 +82,9 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
-            viewModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var createdViewModel = _repository.CreateTest(viewModel);
-            return new JsonResult(createdViewModel, JsonSettings);
+            viewModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var createdTest = _repository.CreateTest(viewModel.Adapt<Test>());
+            return new JsonResult(createdTest.Adapt<TestViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -149,45 +105,38 @@ namespace TestCreator.WebApp.Controllers
             });
         }
 
-
         /// <summary>
-        /// GET api/test/latest
+        /// GET api/test
         /// </summary>
-        /// <param name="num"></param>
-        /// <returns>{num} latest TestViewModel</returns>
-        [HttpGet("Latest/{num:int?}")]
-        public IActionResult Latest(int num = 10)
+        /// <param name="size"></param>
+        /// <param name="sorting">0 - random, 1 - latest, 2 - by title</param>
+        /// <returns>{num} TestViewModel, sorted by param: {sorting}</returns>
+        [HttpGet]
+        public IActionResult GetBySorting([FromQuery] int sorting, [FromQuery] int? size = 10)
         {
-            var latestTests = _repository.GetLatestTests(num);
+            TestsOrder order;
 
-            return new JsonResult(latestTests, JsonSettings);
-        }
+            switch (sorting)
+            {
+                case 0:
+                    order = TestsOrder.Random;
+                    break;
+                case 1:
+                    order = TestsOrder.Latest;
+                    break;
+                case 2:
+                    order = TestsOrder.ByTitle;
+                    break;
+                default:
+                    return NotFound(new
+                    {
+                        Error = $"Sorting parameter has wrong value: {sorting}"
+                    });
+            }
 
-        /// <summary>
-        /// GET: api/test/ByTitle
-        /// </summary>
-        /// <param name="num"></param>
-        /// <returns>{num} TestViewModels order by title</returns>
-        [HttpGet("ByTitle/{num:int?}")]
-        public IActionResult ByTitle(int num = 10)
-        {
-            var tests = _repository.GetTestsByTitle(num);
+            var tests = _repository.GetTestsByParam(size ?? _defaultQuerySize, order);
 
-            return new JsonResult(tests, JsonSettings);
-        }
-
-
-        /// <summary>
-        /// GET: api/test/Random
-        /// </summary>
-        /// <param name="num"></param>
-        /// <returns>{num} random TestViewModels</returns>
-        [HttpGet("Random/{num:int?}")]
-        public IActionResult Random(int num = 10)
-        {
-            var sampleTests = _repository.GetRandomTests(num);
-
-            return new JsonResult(sampleTests?.OrderBy(t => Guid.NewGuid()), JsonSettings);
+            return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
         }
 
         /// <summary>
@@ -202,6 +151,21 @@ namespace TestCreator.WebApp.Controllers
             var tests = _repository.Search(text, num);
 
             return new JsonResult(tests, JsonSettings);
+        }
+
+
+        /// <summary>
+        /// GET: api/test
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns>TestViewModels searched by keyword</returns>
+        [HttpGet]
+        [ExactQueryParam("keyword")]
+        public IActionResult GetByKeyword([FromQuery] string keyword)
+        {
+            var tests = _repository.Search(keyword, _defaultQuerySize);
+
+            return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
         }
     }
 }

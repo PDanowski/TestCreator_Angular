@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using TestCreator.Data.Models;
+using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
-using TestCreator.WebApp.Abstract;
 using TestCreator.WebApp.Controllers;
-using TestCreator.WebApp.Data.Models;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers
@@ -14,200 +15,191 @@ namespace TestCreator.Tests.Controllers
     [TestFixture]
     public class QuestionControllerTests
     {
-        [Test]
-        public void Get_CorrectIdGiven_ReturnsJsonViewModel()
+        private Mock<IQuestionRepository> _mockRepo;
+
+        private QuestionController _sut;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            var viewModel = new QuestionViewModel
-            {
-                Id = 1,
-                Text = "Text1"
-            };
-
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.GetQuestion(It.IsAny<int>())).Returns(viewModel);
-
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.Get(1) as JsonResult;
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.GetObjectFromJsonResult<QuestionViewModel>().Text, viewModel.Text);
-            Assert.AreEqual(result.GetObjectFromJsonResult<QuestionViewModel>().Id, viewModel.Id);
+            _mockRepo = new Mock<IQuestionRepository>();
+            _sut = new QuestionController(_mockRepo.Object);
         }
 
         [Test]
-        public void Get_InvalidIdGiven_ReturnsNotFound()
+        public void Get_WhenCorrectIdGiven_ShouldReturnJsonViewModel()
         {
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.GetQuestion(It.IsAny<int>())).Returns<Question>(null);
+            var questionId = 1;
+            var question = new Question
+            {
+                Id = questionId,
+                Text = "Text1"
+            };
 
-            var controller = new QuestionController(mockRepo.Object);
+            _mockRepo.Setup(x => x.GetQuestion(questionId)).Returns(question);
 
-            var result = controller.Get(1);
+            var result = _sut.Get(questionId) as JsonResult;
+
+            Assert.IsNotNull(result);
+            var viewModel = result.GetObjectFromJsonResult<QuestionViewModel>();
+            Assert.AreEqual(viewModel.Text, question.Text);
+            Assert.AreEqual(viewModel.Id, question.Id);
+        }
+
+        [Test]
+        public void Get_WhenInvalidIdGiven_ShouldReturnNotFound()
+        {
+            var questionId = 2;
+
+            _mockRepo.Setup(x => x.GetQuestion(questionId)).Returns<Question>(null);
+            var result = _sut.Get(questionId);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
 
         [Test]
-        public void All_CorrectIdGiven_ReturnsJsonViewModel()
+        public void GetByTestId_WhenCorrectIdGiven_ShouldReturnJsonViewModel()
         {
-            var viewModels = new List<QuestionViewModel>
+            var testId = 1;
+            var questions = new List<Question>
             {
-                new QuestionViewModel
+                new Question
                 {
                     Id = 1,
-                    Text = "Text1"
+                    Text = "Text1",
+                    TestId = testId
                 },
-                new QuestionViewModel
+                new Question
                 {
                     Id = 2,
-                    Text = "Text2"
+                    Text = "Text2",
+                    TestId = testId
                 }
             };
 
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.GetQuestions(It.IsAny<int>())).Returns(viewModels);
+            _mockRepo.Setup(x => x.GetQuestions(testId)).Returns(questions);
 
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.All(1) as JsonResult;
+            var result = _sut.GetByTestId(testId) as JsonResult;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.GetIEnumberableFromJsonResult<QuestionViewModel>().First().Text, viewModels.First().Text);
-            Assert.AreEqual(result.GetIEnumberableFromJsonResult<QuestionViewModel>().First().Id, viewModels.First().Id);
+
+            var viewModelsCollection = result.GetIEnumberableFromJsonResult<QuestionViewModel>().ToList();
+            foreach (var question in questions)
+            {
+                Assert.IsTrue(viewModelsCollection.Any(x => x.Text == question.Text));
+                Assert.IsTrue(viewModelsCollection.Any(x => x.Id == question.Id));
+                Assert.IsTrue(viewModelsCollection.Any(x => x.TestId == testId));
+            }
         }
 
         [Test]
-        public void All_InvalidIdGiven_ReturnsNotFound()
+        public void GetByTestId_WhenInvalidIdGiven_ShouldReturnNotFound()
         {
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.GetQuestions(It.IsAny<int>())).Returns<List<QuestionViewModel>>(null);
+            var testId = 2;
+            _mockRepo.Setup(x => x.GetQuestions(testId)).Returns<List<QuestionViewModel>>(null);
 
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.All(1);
+            var result = _sut.GetByTestId(testId);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
 
         [Test]
-        public void Post_CorrectViewModelGiven_ReturnsJsonViewModel()
+        public void Post_WhenCorrectViewModelGiven_ShouldReturnJsonViewModel()
         {
-            var viewModel = new QuestionViewModel
+            var questionId = 1;
+            var question = new Question
             {
-                Id = 1,
+                Id = questionId,
                 Text = "Text1"
             };
 
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.CreateQuestion(It.IsAny<QuestionViewModel>())).Returns(viewModel);
+            _mockRepo.Setup(x => x.CreateQuestion(It.Is<Question>(q => q.Id == questionId))).Returns(question);
 
-
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.Post(viewModel) as JsonResult;
+            var result = _sut.Post(question.Adapt<QuestionViewModel>()) as JsonResult;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.GetObjectFromJsonResult<QuestionViewModel>().Text, viewModel.Text);
-            Assert.AreEqual(result.GetObjectFromJsonResult<QuestionViewModel>().Id, viewModel.Id);
+            var viewModel = result.GetObjectFromJsonResult<QuestionViewModel>();
+            Assert.AreEqual(viewModel.Text, question.Text);
+            Assert.AreEqual(viewModel.Id, question.Id);
         }
 
         [Test]
-        public void Post_InvalidViewModelGiven_ReturnsStatusCode500()
+        public void Post_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
         {
-            var mockRepo = new Mock<IQuestionRepository>();
-
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.Post(null) as StatusCodeResult;
+            var result = _sut.Post(null) as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
         }
 
         [Test]
-        public void Put_CorrectViewModelGiven_ReturnsJsonViewModel()
+        public void Put_WhenCorrectViewModelGiven_ShouldReturnJsonViewModel()
         {
-            var viewModel = new QuestionViewModel
+            var questionId = 1;
+            var question = new Question
             {
                 Id = 1,
                 Text = "Text1"
             };
 
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.UpdateQuestion(It.IsAny<QuestionViewModel>())).Returns(viewModel);
+            _mockRepo.Setup(x => x.UpdateQuestion(It.Is<Question>(q => q.Id == questionId))).Returns(question);
 
-            var controller =
-                new QuestionController(mockRepo.Object);
-
-            var result = controller.Put(viewModel) as JsonResult;
+            var result = _sut.Put(question.Adapt<QuestionViewModel>()) as JsonResult;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.GetObjectFromJsonResult<QuestionViewModel>().Text, viewModel.Text);
-            Assert.AreEqual(result.GetObjectFromJsonResult<QuestionViewModel>().Id, viewModel.Id);
+            var viewModel = result.GetObjectFromJsonResult<QuestionViewModel>();
+            Assert.AreEqual(viewModel.Text, question.Text);
+            Assert.AreEqual(viewModel.Id, question.Id);
         }
 
         [Test]
-        public void Put_InvalidViewModelGiven_ReturnsStatusCode500()
+        public void Put_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
         {
-            var mockRepo = new Mock<IQuestionRepository>();
-
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.Put(null) as StatusCodeResult;
+            var result = _sut.Put(null) as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
         }
 
         [Test]
-        public void Put_CorrectViewModelErrorDuringProcessing_ReturnsNotFound()
+        public void Put_CorrectViewModelErrorDuringProcessing_ShouldReturnNotFound()
         {
-            var viewModel = new QuestionViewModel
+            var question = new Question
             {
                 Id = 1,
                 Text = "Text1"
             };
 
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.UpdateQuestion(It.IsAny<QuestionViewModel>())).Returns<QuestionViewModel>(null);
+            _mockRepo.Setup(x => x.UpdateQuestion(question)).Returns<Question>(null);
 
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.Put(viewModel);
+            var result = _sut.Put(question.Adapt<QuestionViewModel>());
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
 
         [Test]
-        public void Delete_CorrectViewModelGiven_ReturnsJsonViewModel()
+        public void Delete_WhenCorrectViewModelGiven_ShouldReturnJsonViewModel()
         {
-            int id = 1;
+            var questionId = 1;
 
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.DeleteQuestion(It.IsAny<int>())).Returns(true);
+            _mockRepo.Setup(x => x.DeleteQuestion(questionId)).Returns(true);
 
-            var controller =
-                new QuestionController(mockRepo.Object);
-
-            var result = controller.Delete(id);
+            var result = _sut.Delete(questionId);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NoContentResult>(result);
         }
 
         [Test]
-        public void Delete_CorrectViewModelErrorDuringProcessing_ReturnsNotFound()
+        public void Delete_WhenCorrectViewModelErrorDuringProcessing_ShouldReturnNotFound()
         {
-            var mockRepo = new Mock<IQuestionRepository>();
-            mockRepo.Setup(x => x.DeleteQuestion(1)).Returns(false);
+            var questionId = 2;
+            _mockRepo.Setup(x => x.DeleteQuestion(questionId)).Returns(false);
 
-            var controller = new QuestionController(mockRepo.Object);
-
-            var result = controller.Delete(2);
+            var result = _sut.Delete(questionId);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);

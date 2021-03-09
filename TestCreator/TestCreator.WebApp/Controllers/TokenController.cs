@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TestCreator.WebApp.Abstract;
+using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Services.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.WebApp.Controllers

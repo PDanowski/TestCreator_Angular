@@ -1,4 +1,4 @@
-interface Answer {
+export interface Answer {
   Id: number;
   QuestionId: number;
   Text: string;

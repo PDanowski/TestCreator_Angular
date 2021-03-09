@@ -2,6 +2,8 @@ import { Component, Inject, Input, OnChanges, SimpleChanges } from "@angular/cor
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Result } from 'src/app/interfaces/result';
+import { Test } from 'src/app/interfaces/test';
 
 @Component({
   selector: "result-list",
@@ -40,7 +42,7 @@ export class ResultListComponent {
 
   loadData() {
 
-    var url = this.baseUrl + "api/result/all/" + this.test.Id;
+    var url = this.baseUrl + "api/result?testId=" + this.test.Id;
 
     this.http.get<Result[]>(url).subscribe(result => {
         this.results = result;
