@@ -38,13 +38,13 @@ namespace TestCreator.Data.Repositories
             switch (order)
             {
                 case TestsOrder.ByTitle:
-                    tests = _context.Tests.OrderBy(t => t.Title).AsNoTracking();
+                    tests = _context.Tests.OrderBy(t => t.Title).Take(number).AsNoTracking();
                     break;
                 case TestsOrder.Latest:
-                    tests = _context.Tests.OrderByDescending(t => t.CreationDate).AsNoTracking();
+                    tests = _context.Tests.OrderByDescending(t => t.CreationDate).Take(number).AsNoTracking();
                     break;
                 case TestsOrder.Random:
-                    tests = _context.Tests.OrderBy(t => Guid.NewGuid()).AsNoTracking();
+                    tests = _context.Tests.OrderBy(t => Guid.NewGuid()).Take(number).AsNoTracking();
                     break;
             }
 
