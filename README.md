@@ -1,14 +1,21 @@
 # TestCreator
-Test creator web app (ASP.NET Core 2.2 and Angular 6) 
+Test creator web app (.NET 5/ASP.NET Core and Angular 10) 
 
-Used languages, technologies and tools:
+Used languages, technologies and frameworks
 
-    ASP.NET Core 2.2
-    C#
-    EntityFramework Core 2.2
-    Angular 6
-    Bootstrap 4 (+ Bootswatch)
-    LESS
+Backend:
+
+    ASP.NET Core 
+    .NET 5 
+    EntityFramework Core 5.0
     Mapster
     NUnit
     Moq
+    
+Frontend:
+    
+    Angular 10
+    Bootstrap 4 (+ Bootswatch)
+    LESS
+    Font-Awesome
+
