@@ -246,7 +246,7 @@ namespace TestCreator.Tests.Controllers
             mockTokenRepo.Setup(x => x.AddRefreshToken(It.IsAny<Token>())).Verifiable();
             mockTokenRepo.Setup(x => x.RemoveRefreshToken(It.IsAny<Token>())).Verifiable();
             mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
-                .Returns(refreshToken);
+                .Returns(Task.FromResult(refreshToken));
 
             var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, mockServie.Object);
 
@@ -293,7 +293,7 @@ namespace TestCreator.Tests.Controllers
 
             var mockTokenRepo = new Mock<ITokenRepository>();
             mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
-                .Returns(refreshToken);
+                .Returns(Task.FromResult(refreshToken));
 
             var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, null);
 
@@ -316,7 +316,7 @@ namespace TestCreator.Tests.Controllers
 
             var mockTokenRepo = new Mock<ITokenRepository>();
             mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
-                .Returns((Token)null);
+                .Returns(Task.FromResult((Token)null));
 
             var controller = new TokenController(null, mockTokenRepo.Object, null);
 
@@ -336,7 +336,7 @@ namespace TestCreator.Tests.Controllers
 
             var mockTokenRepo = new Mock<ITokenRepository>();
             mockTokenRepo.Setup(x => x.CheckRefreshTokenForClient(viewModel.ClientId, It.IsAny<string>()))
-                .Returns((Token)null);
+                .Returns(Task.FromResult((Token)null));
 
             var controller = new TokenController(null, mockTokenRepo.Object, null);
 

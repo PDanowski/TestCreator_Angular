@@ -20,24 +20,24 @@ namespace TestCreator.Data.Repositories
             _context = context;
         }
 
-        public Task<ApplicationUser> GetUserByNameAsync(string userName)
+        public async Task<ApplicationUser> GetUserByNameAsync(string userName)
         {
-            return _userManager.FindByNameAsync(userName);
+            return await _userManager.FindByNameAsync(userName);
         }
 
-        public Task<ApplicationUser> GetUserByEmailAsync(string email)
+        public async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
-            return _userManager.FindByEmailAsync(email);
+            return await _userManager.FindByEmailAsync(email);
         }
 
-        public Task<ApplicationUser> GetUserById(string userId)
+        public async Task<ApplicationUser> GetUserById(string userId)
         {
-            return _userManager.FindByIdAsync(userId);
+            return await _userManager.FindByIdAsync(userId);
         }
 
-        public Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
         {
-            return _userManager.CheckPasswordAsync(user, password);
+            return await _userManager.CheckPasswordAsync(user, password);
         }
 
         public async Task<ApplicationUser> CreateUserAndAddToRolesAsync(ApplicationUser user, string[] roles)

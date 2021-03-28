@@ -1,12 +1,13 @@
-﻿using TestCreator.Data.Models;
+﻿using System.Threading.Tasks;
+using TestCreator.Data.Models;
 
 namespace TestCreator.Data.Repositories.Interfaces
 {
     public interface ITokenRepository
     {
-        Token CheckRefreshTokenForClient(string clientId, string refreshToken);
-        void RemoveRefreshToken(Token refreshToken);
-        void AddRefreshToken(Token refreshToken);
+        Task<Token> CheckRefreshTokenForClient(string clientId, string refreshToken);
+        Task RemoveRefreshToken(Token refreshToken);
+        Task AddRefreshToken(Token refreshToken);
         
     }
 }

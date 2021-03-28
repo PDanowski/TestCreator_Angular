@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,9 @@ namespace TestCreator.WebApp.Controllers
         /// </summary>
         /// <returns>All AnswerViewModel for given {questionId}</returns>
         [HttpGet]
-        public IActionResult GetByQuestionId([Required][FromQuery(Name = "questionId")] int questionId)
+        public async Task<IActionResult> GetByQuestionId([Required][FromQuery(Name = "questionId")] int questionId)
         {
-            var answers = _repository.GetAnswers(questionId);
+            var answers = await _repository.GetAnswers(questionId);
 
             if (answers == null)
             {
@@ -46,9 +47,9 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="id"></param>
         /// <returns>AnswerViewModel with given {id}</returns>
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var answer = _repository.GetAnswer(id);
+            var answer = await _repository.GetAnswer(id);
 
             if (answer == null)
             {
@@ -67,14 +68,14 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="viewModel">AnswerViewModel with data</param>
         [HttpPut]
         [Authorize]
-        public IActionResult Put([FromBody]AnswerViewModel viewModel)
+        public async Task<IActionResult> Put([FromBody]AnswerViewModel viewModel)
         {
             if (viewModel == null)
             {
                 return new StatusCodeResult(500);
             }
 
-            var updatedAnswer = _repository.UpdateAnswer(viewModel.Adapt<Answer>());
+            var updatedAnswer = await _repository.UpdateAnswer(viewModel.Adapt<Answer>());
             if (updatedAnswer == null)
             {
                 return NotFound(new
@@ -91,14 +92,14 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="viewModel">AnswerViewModel with data</param>
         [HttpPost]
         [Authorize]
-        public IActionResult Post([FromBody]AnswerViewModel viewModel)
+        public async Task<IActionResult> Post([FromBody]AnswerViewModel viewModel)
         {
             if (viewModel == null)
             {
                 return new StatusCodeResult(500);
             }
 
-            var createdAnswer = _repository.CreateAnswer(viewModel.Adapt<Answer>());
+            var createdAnswer = await _repository.CreateAnswer(viewModel.Adapt<Answer>());
             return new JsonResult(createdAnswer.Adapt<AnswerViewModel>(), JsonSettings);
         }
 
@@ -108,9 +109,9 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="id">Identifier of AnswerViewModel</param>
         [HttpDelete("{id}")]
         [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_repository.DeleteAnswer(id))
+            if (await _repository.DeleteAnswer(id))
             {
                 return new NoContentResult();
             }

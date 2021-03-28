@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { faRandom, faFire, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons';
 import { Test } from 'src/app/interfaces/test';
+import * as signalR from '@microsoft/signalr';  
 
 @Component({
   selector: "test-list",
@@ -16,6 +17,7 @@ export class TestListComponent implements OnInit {
   title: string;
   selectedTest: Test;
   tests: Test[];
+  url: string;
 
   faRandom = faRandom;
   faFire = faFire;
@@ -25,28 +27,48 @@ export class TestListComponent implements OnInit {
 
     console.log("TestListComponent create using " + this.class + " class.");
 
-    var url = this.baseUrl + "api/test?sorting=";
+    this.url = this.baseUrl + "api/test?sorting=";
 
     switch (this.class) {
     case "latest":
     default:
-      url += "1";
+      this.url += "1";
       this.title = "Latest tests";
       break;
     case "random":
-      url += "0";
+      this.url += "0";
       this.title = "Random tests";
       break;
     case "byTitle":
-      url += "2";
+      this.url += "2";
       this.title = "Tests sorted by title";
       break;
     }
 
-    this.http.get<Test[]>(url).subscribe(result => {
-        this.tests = result;
-      },
-      error => console.error(error));
+    this.getTests();
+
+    const connection = new signalR.HubConnectionBuilder()  
+      .configureLogging(signalR.LogLevel.Information)  
+      .withUrl(this.baseUrl + 'testsHub')  
+      .build(); 
+
+    connection.start().then(function () {  
+        console.log('SignalR Connected!');  
+      }).catch(function (err) {  
+        return console.error(err.toString());  
+      });
+      
+    connection.on("TestCreated", () => {
+        if (this.class === "latest"){
+          this.getTests();  
+        }  
+      });
+      
+    connection.on("TestRemoved", (id: number) => {
+        if (this.tests.find(x => x.Id == id) != null){
+          this.getTests();  
+        }  
+      }); 
   }
 
   constructor(private http: HttpClient,
@@ -56,6 +78,13 @@ export class TestListComponent implements OnInit {
     this.http = http;
     this.baseUrl = baseUrl;
 
+  }
+
+  getTests(){
+    this.http.get<Test[]>(this.url).subscribe(result => {
+      this.tests = result;
+    },
+    error => console.error(error));
   }
 
   onSelect(test: Test) {

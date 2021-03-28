@@ -45,7 +45,7 @@ namespace TestCreator.WebApp.Controllers
             try
             {
                 var refreshToken =
-                    _tokenRepository.CheckRefreshTokenForClient(viewModel.ClientId, viewModel.RefreshToken);
+                    await _tokenRepository.CheckRefreshTokenForClient(viewModel.ClientId, viewModel.RefreshToken);
 
                 if (refreshToken == null)
                 {
@@ -60,8 +60,8 @@ namespace TestCreator.WebApp.Controllers
                 }
 
                 var newRefreshToken = _tokenService.GenerateRefreshToken(refreshToken.ClientId, refreshToken.UserId);
-                _tokenRepository.RemoveRefreshToken(refreshToken);
-                _tokenRepository.AddRefreshToken(newRefreshToken);
+                await _tokenRepository.RemoveRefreshToken(refreshToken);
+                await _tokenRepository.AddRefreshToken(newRefreshToken);
 
                 var tokenData = _tokenService.CreateAccessToken(newRefreshToken.UserId);
 
@@ -73,7 +73,6 @@ namespace TestCreator.WebApp.Controllers
                 };
 
                 return Json(response);
-
             }
             catch (Exception ex)
             {
@@ -99,7 +98,7 @@ namespace TestCreator.WebApp.Controllers
 
                 var token = _tokenService.GenerateRefreshToken(viewModel.ClientId, user.Id);
 
-                _tokenRepository.AddRefreshToken(token);
+                await _tokenRepository.AddRefreshToken(token);
 
                 var accessTokenData = _tokenService.CreateAccessToken(user.Id);
 

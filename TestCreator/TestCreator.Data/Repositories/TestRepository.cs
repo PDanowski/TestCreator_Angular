@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TestCreator.Data.Context;
 using TestCreator.Data.Models;
@@ -18,20 +19,20 @@ namespace TestCreator.Data.Repositories
             this._context = context;
         }
 
-        public Test GetTest(int id)
+        public async Task<Test> GetTest(int id)
         {
-            return _context.Tests.FirstOrDefault(t => t.Id.Equals(id));
+            return await _context.Tests.FirstOrDefaultAsync(t => t.Id.Equals(id));
         }
 
-        public Test GetTestWithInclude(int id)
+        public async Task<Test> GetTestWithInclude(int id)
         {
-            return _context.Tests.Where(t => t.Id.Equals(id))
+            return await _context.Tests.Where(t => t.Id.Equals(id))
                 .Include(t => t.Questions)
                 .ThenInclude(q => q.Answers)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
 
-        public List<Test> GetTestsByParam(int number, TestsOrder order)
+        public async Task<List<Test>> GetTestsByParam(int number, TestsOrder order)
         {
             IQueryable<Test> tests = null;
 
@@ -48,31 +49,31 @@ namespace TestCreator.Data.Repositories
                     break;
             }
 
-            return tests!.ToList();
+            return await tests!.ToListAsync();
         }
 
-        public List<Test> Search(string text, int number)
+        public async Task<List<Test>> Search(string text, int number)
         {
-            return _context.Tests.Where(t => t.Title.Contains(text))
+            return await _context.Tests.Where(t => t.Title.Contains(text))
                 .Take(number)
-                .ToList();
+                .ToListAsync();
         }
 
-        public Test CreateTest(Test test)
+        public async Task<Test> CreateTest(Test test)
         {
             test.CreationDate = DateTime.Now;
             test.LastModificationDate = DateTime.Now;
             test.UserId = _context.Users.FirstOrDefault(u => u.UserName.Equals("Admin"))?.Id;
 
-            _context.Tests.Add(test);
-            _context.SaveChanges();
+            await _context.Tests.AddAsync(test);
+            await _context.SaveChangesAsync();
 
             return test;
         }
 
-        public Test UpdateTest(Test test)
+        public async Task<Test> UpdateTest(Test test)
         {
-            var testToUpdate = _context.Tests.FirstOrDefault(t => t.Id.Equals(test.Id));
+            var testToUpdate = await _context.Tests.FirstOrDefaultAsync(t => t.Id.Equals(test.Id));
 
             if (testToUpdate == null)
             {
@@ -86,14 +87,14 @@ namespace TestCreator.Data.Repositories
 
             test.LastModificationDate = DateTime.Now;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return testToUpdate;
         }
 
-        public bool DeleteTest(int id)
+        public async Task<bool> DeleteTest(int id)
         {
-            var test = _context.Tests.FirstOrDefault(t => t.Id.Equals(id));
+            var test = await _context.Tests.FirstOrDefaultAsync(t => t.Id.Equals(id));
 
             if (test == null)
             {
@@ -101,7 +102,7 @@ namespace TestCreator.Data.Repositories
             }
 
             _context.Tests.Remove(test);
-            return _context.SaveChanges() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

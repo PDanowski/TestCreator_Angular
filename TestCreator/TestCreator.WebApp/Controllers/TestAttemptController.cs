@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.Converters.Interfaces;
 using TestCreator.WebApp.Services.Interfaces;
@@ -26,9 +27,9 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="id"></param>
         /// <returns>Single TestAttemptViewModel with given {id}</returns>
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var test = _repository.GetTestWithInclude(id);
+            var test = await _repository.GetTestWithInclude(id);
             var viewModel = _converter.Convert(test);
 
             if (viewModel == null)

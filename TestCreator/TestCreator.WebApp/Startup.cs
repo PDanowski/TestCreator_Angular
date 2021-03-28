@@ -14,6 +14,7 @@ using TestCreator.Data.Context;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories;
 using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Broadcast;
 using TestCreator.WebApp.Converters;
 using TestCreator.WebApp.Converters.Interfaces;
 using TestCreator.WebApp.Services;
@@ -82,6 +83,7 @@ namespace TestCreator.WebApp
                     };
                 });
 
+            services.AddSignalR();
 
             //register dependencies
             services.Add(new ServiceDescriptor(typeof(ITestAttemptViewModelConverter), typeof(TestAttemptViewModelConverter), ServiceLifetime.Scoped));
@@ -131,8 +133,8 @@ namespace TestCreator.WebApp
             app.UseSpaStaticFiles();
 
             app.UseAuthentication();
-
             app.UseRouting();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -140,6 +142,7 @@ namespace TestCreator.WebApp
                     pattern: "{controller}/{action}/{id?}");
 
                 //endpoints.MapFallbackToController("Index", "Home");
+                endpoints.MapHub<TestsHub>("/testsHub");
             });
 
             app.UseSpa(spa =>

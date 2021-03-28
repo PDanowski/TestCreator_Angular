@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -7,7 +8,6 @@ using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
 using TestCreator.WebApp.Controllers;
 using TestCreator.WebApp.Converters;
-using TestCreator.WebApp.Services;
 using TestCreator.WebApp.Services.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
@@ -53,9 +53,9 @@ namespace TestCreator.Tests.Controllers
                 }
             };
 
-            _mockRepo.Setup(x => x.GetTestWithInclude(testId)).Returns(test);
+            _mockRepo.Setup(x => x.GetTestWithInclude(testId)).Returns(Task.FromResult(test));
 
-            var result = _sut.Get(testId) as JsonResult;
+            var result = _sut.Get(testId).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
@@ -67,9 +67,9 @@ namespace TestCreator.Tests.Controllers
         public void Get_WhenInvalidIdGiven_ShouldReturnNotFound()
         {
             var testId = 2;
-            _mockRepo.Setup(x => x.GetTestWithInclude(testId)).Returns<Test>(null);
+            _mockRepo.Setup(x => x.GetTestWithInclude(testId)).Returns(Task.FromResult((Test)null));
 
-            var result = _sut.Get(testId);
+            var result = _sut.Get(testId).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);

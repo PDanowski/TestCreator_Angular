@@ -14,6 +14,7 @@ namespace TestCreator.Data.Models
         [Key]
         [Required]
         public int Id { get; set; }
+
         [Required]
         public string ClientId { get; set; }
 

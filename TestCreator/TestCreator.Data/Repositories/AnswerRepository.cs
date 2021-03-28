@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TestCreator.Data.Context;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
@@ -16,31 +18,30 @@ namespace TestCreator.Data.Repositories
             this._context = context;
         }
 
-        public Answer GetAnswer(int id)
+        public async Task<Answer> GetAnswer(int id)
         {
-            return _context.Answers.FirstOrDefault(t => t.Id.Equals(id));
+            return await _context.Answers.FirstOrDefaultAsync(t => t.Id.Equals(id));
         }
 
-        public List<Answer> GetAnswers(int questionId)
+        public async Task<List<Answer>> GetAnswers(int questionId)
         {
-            var answers1 = _context.Answers.ToList();
-            return answers1.Where(t => t.QuestionId == questionId).ToList();
+            return await _context.Answers.Where(t => t.QuestionId == questionId).ToListAsync();
         }
 
-        public Answer CreateAnswer(Answer answer)
+        public async Task<Answer> CreateAnswer(Answer answer)
         {
             answer.CreationDate = DateTime.Now;
             answer.LastModificationDate = DateTime.Now;
 
-            _context.Answers.Add(answer);
-            _context.SaveChanges();
+            await _context.Answers.AddAsync(answer);
+            await _context.SaveChangesAsync();
 
             return answer;
         }
 
-        public Answer UpdateAnswer(Answer answer)
+        public async Task<Answer> UpdateAnswer(Answer answer)
         {
-            var answerToUpdate = _context.Answers.FirstOrDefault(t => t.Id.Equals(answer.Id));
+            var answerToUpdate = await _context.Answers.FirstOrDefaultAsync(t => t.Id.Equals(answer.Id));
 
             if (answerToUpdate == null)
             {
@@ -54,14 +55,14 @@ namespace TestCreator.Data.Repositories
 
             answerToUpdate.LastModificationDate = DateTime.Now;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return answerToUpdate;
         }
 
-        public bool DeleteAnswer(int id)
+        public async Task<bool> DeleteAnswer(int id)
         {
-            var answer = _context.Answers.FirstOrDefault(t => t.Id.Equals(id));
+            var answer = await _context.Answers.FirstOrDefaultAsync(t => t.Id.Equals(id));
 
             if (answer == null)
             {
@@ -69,7 +70,7 @@ namespace TestCreator.Data.Repositories
             }
 
             _context.Answers.Remove(answer);
-            return _context.SaveChanges() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

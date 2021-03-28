@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -36,9 +37,9 @@ namespace TestCreator.Tests.Controllers
                 Text = "Text1"
             };
 
-            _mockRepo.Setup(x => x.GetAnswer(answerId)).Returns(answer);
+            _mockRepo.Setup(x => x.GetAnswer(answerId)).Returns(Task.FromResult(answer));
 
-            var result = _sut.Get(answerId) as JsonResult;
+            var result = _sut.Get(answerId).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Text"), answer.Text);
@@ -49,9 +50,9 @@ namespace TestCreator.Tests.Controllers
         public void Get_WhenInvalidIdGiven_ShouldReturnNotFound()
         {
             var answerId = 2;
-            _mockRepo.Setup(x => x.GetAnswer(answerId)).Returns<Answer>(null);
+            _mockRepo.Setup(x => x.GetAnswer(answerId)).Returns(Task.FromResult((Answer)null));
 
-            var result = _sut.Get(answerId);
+            var result = _sut.Get(answerId).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
@@ -77,9 +78,9 @@ namespace TestCreator.Tests.Controllers
                 }
             };
 
-            _mockRepo.Setup(x => x.GetAnswers(questionId)).Returns(answers);
+            _mockRepo.Setup(x => x.GetAnswers(questionId)).Returns(Task.FromResult(answers));
 
-            var result = _sut.GetByQuestionId(questionId) as JsonResult;
+            var result = _sut.GetByQuestionId(questionId).Result as JsonResult;
 
             Assert.IsNotNull(result);
 
@@ -96,9 +97,9 @@ namespace TestCreator.Tests.Controllers
         public void GetByQuestionId_WhenInvalidIdGiven_ShouldReturnNotFound()
         {
             var questionId = 2;
-            _mockRepo.Setup(x => x.GetAnswers(questionId)).Returns<List<Answer>>(null);
+            _mockRepo.Setup(x => x.GetAnswers(questionId)).Returns(Task.FromResult((List<Answer>)null));
 
-            var result = _sut.GetByQuestionId(questionId);
+            var result = _sut.GetByQuestionId(questionId).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
@@ -113,9 +114,9 @@ namespace TestCreator.Tests.Controllers
                 Text = "Text1"
             };
 
-            _mockRepo.Setup(x => x.CreateAnswer(It.IsAny<Answer>())).Returns(answer);
+            _mockRepo.Setup(x => x.CreateAnswer(It.IsAny<Answer>())).Returns(Task.FromResult(answer));
 
-            var result = _sut.Post(answer.Adapt<AnswerViewModel>()) as JsonResult;
+            var result = _sut.Post(answer.Adapt<AnswerViewModel>()).Result as JsonResult;
 
             Assert.IsNotNull(result);
             var viewModel = result.GetObjectFromJsonResult<AnswerViewModel>();
@@ -126,7 +127,7 @@ namespace TestCreator.Tests.Controllers
         [Test]
         public void Post_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
         {
-            var result = _sut.Post(null) as StatusCodeResult;
+            var result = _sut.Post(null).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -142,9 +143,9 @@ namespace TestCreator.Tests.Controllers
                 Text = "Text1"
             };
 
-            _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Returns(answer);
+            _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Returns(Task.FromResult(answer));
 
-            var result = _sut.Put(answer.Adapt<AnswerViewModel>()) as JsonResult;
+            var result = _sut.Put(answer.Adapt<AnswerViewModel>()).Result as JsonResult;
 
             Assert.IsNotNull(result);
             var viewModel = result.GetObjectFromJsonResult<AnswerViewModel>();
@@ -155,7 +156,7 @@ namespace TestCreator.Tests.Controllers
         [Test]
         public void Put_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
         {
-            var result = _sut.Put(null) as StatusCodeResult;
+            var result = _sut.Put(null).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -171,9 +172,9 @@ namespace TestCreator.Tests.Controllers
                 Text = "Text1"
             };
 
-            _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Returns<Answer>(null);
+            _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Returns(Task.FromResult((Answer)null));
 
-            var result = _sut.Put(answer.Adapt<AnswerViewModel>());
+            var result = _sut.Put(answer.Adapt<AnswerViewModel>()).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
@@ -184,9 +185,9 @@ namespace TestCreator.Tests.Controllers
         {
             var answerId = 1;
 
-            _mockRepo.Setup(x => x.DeleteAnswer(answerId)).Returns(true);
+            _mockRepo.Setup(x => x.DeleteAnswer(answerId)).Returns(Task.FromResult(true));
 
-            var result = _sut.Delete(answerId);
+            var result = _sut.Delete(answerId).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NoContentResult>(result);
@@ -197,9 +198,9 @@ namespace TestCreator.Tests.Controllers
         {
             var answerId = 2;
 
-            _mockRepo.Setup(x => x.DeleteAnswer(answerId)).Returns(false);
+            _mockRepo.Setup(x => x.DeleteAnswer(answerId)).Returns(Task.FromResult(false));
 
-            var result = _sut.Delete(answerId);
+            var result = _sut.Delete(answerId).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);

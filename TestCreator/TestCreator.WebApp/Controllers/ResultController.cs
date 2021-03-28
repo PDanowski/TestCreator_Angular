@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,9 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="id"></param>
         /// <returns>ResultViewModel with given {id}</returns>
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var result = _repository.GetResult(id);
+            var result = await _repository.GetResult(id);
 
             if (result == null)
             {
@@ -47,14 +48,14 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="viewModel">ResultViewModel with data</param>
         [HttpPut]
         [Authorize]
-        public IActionResult Put([FromBody]ResultViewModel viewModel)
+        public async Task<IActionResult> Put([FromBody]ResultViewModel viewModel)
         {
             if (viewModel == null)
             {
                 return new StatusCodeResult(500);
             }
 
-            var updatedResult = _repository.UpdateResult(viewModel.Adapt<Result>());
+            var updatedResult = await _repository.UpdateResult(viewModel.Adapt<Result>());
             if (updatedResult == null)
             {
                 return NotFound(new
@@ -71,14 +72,14 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="viewModel">ResultViewModel with data</param>
         [HttpPost]
         [Authorize]
-        public IActionResult Post([FromBody]ResultViewModel viewModel)
+        public async Task<IActionResult> Post([FromBody]ResultViewModel viewModel)
         {
             if (viewModel == null)
             {
                 return new StatusCodeResult(500);
             }
 
-            var createdResult = _repository.CreateResult(viewModel.Adapt<Result>());
+            var createdResult = await _repository.CreateResult(viewModel.Adapt<Result>());
             return new JsonResult(createdResult.Adapt<ResultViewModel>(), JsonSettings);
         }
 
@@ -88,9 +89,9 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="id">Identifier of ResultViewModel</param>
         [HttpDelete("{id}")]
         [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_repository.DeleteResult(id))
+            if (await _repository.DeleteResult(id))
             {
                 return new NoContentResult();
             }
@@ -106,9 +107,9 @@ namespace TestCreator.WebApp.Controllers
         /// <param name="testId"></param>
         /// <returns>All ResultViewModel for given {testId}</returns>
         [HttpGet]
-        public IActionResult GetByTestId([Required][FromQuery(Name = "testId")] int testId)
+        public async Task<IActionResult> GetByTestId([Required][FromQuery(Name = "testId")] int testId)
         {
-            var results = _repository.GetResults(testId);
+            var results = await _repository.GetResults(testId);
 
             if (results == null)
             {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Params;
 
@@ -6,12 +7,12 @@ namespace TestCreator.Data.Repositories.Interfaces
 {
     public interface ITestRepository
     {
-        Test GetTest(int id);
-        Test GetTestWithInclude(int id);
-        List<Test> GetTestsByParam(int number, TestsOrder order);
-        List<Test> Search(string text, int number);
-        Test CreateTest(Test test);
-        Test UpdateTest(Test test);
-        bool DeleteTest(int id);
+        Task<Test> GetTest(int id);
+        Task<Test> GetTestWithInclude(int id);
+        Task<List<Test>> GetTestsByParam(int number, TestsOrder order);
+        Task<List<Test>> Search(string text, int number);
+        Task<Test> CreateTest(Test test);
+        Task<Test> UpdateTest(Test test);
+        Task<bool> DeleteTest(int id);
     }
 }

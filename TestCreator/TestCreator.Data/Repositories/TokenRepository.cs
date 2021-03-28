@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TestCreator.Data.Context;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
@@ -14,22 +15,22 @@ namespace TestCreator.Data.Repositories
             this._context = context;
         }
 
-        public Token CheckRefreshTokenForClient(string clientId, string refreshToken)
+        public async Task<Token> CheckRefreshTokenForClient(string clientId, string refreshToken)
         {
-            return _context.Tokens.FirstOrDefault(t => t.ClientId == clientId && t.Value == refreshToken);
+            return await _context.Tokens.FirstOrDefaultAsync(t => t.ClientId == clientId && t.Value == refreshToken);
         }
 
-        public void RemoveRefreshToken(Token refreshToken)
+        public async Task RemoveRefreshToken(Token refreshToken)
         {
-            _context.Tokens.Remove(refreshToken);
-            _context.SaveChanges();
+            _context.Tokens.Remove(refreshToken); 
+            await _context.SaveChangesAsync();
         }
 
 
-        public void AddRefreshToken(Token refreshToken)
+        public async Task AddRefreshToken(Token refreshToken)
         {
-            _context.Tokens.Add(refreshToken);
-            _context.SaveChanges();
+            await _context.Tokens.AddAsync(refreshToken);
+            await _context.SaveChangesAsync();
         }
     }
 }
