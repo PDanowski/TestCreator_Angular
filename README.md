@@ -8,6 +8,7 @@ Backend:
     ASP.NET Core 
     .NET 5 
     EntityFramework Core 5.0
+    SignalR
     Mapster
     NUnit
     Moq
