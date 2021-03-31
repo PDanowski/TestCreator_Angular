@@ -6,6 +6,7 @@ import { isPlatformBrowser } from "@angular/common";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { map, catchError } from 'rxjs/operators';
 import { TokenResponse } from 'src/app/interfaces/token.response';
+import { TokenRequest } from 'src/app/interfaces/token.request';
 
 
 @Injectable()
@@ -19,12 +20,13 @@ export class AuthService {
 
   login(username: string, password: string): Observable<boolean>{
     var url = "api/token/auth";
-    var data = {
+    var data =  {
       Username: username,
       Password: password,
       ClientId: this.clientId,
       GrantType: "password",
-      Scope: "offline_access profile email"
+      Scope: "offline_access profile email",
+      RefreshToken: null
     };
 
     return this.getAuthFromServer(url, data);
@@ -33,6 +35,20 @@ export class AuthService {
   logout() : boolean {
     this.setAuth(null);
     return true;
+  }
+
+  getAuthFromServer(url: string, data: TokenRequest) : Observable<boolean>{
+    return this.http.post<TokenResponse>(url, data).pipe(map((result) => {
+      let token = result && result.token;
+
+      if (token) {
+        this.setAuth(result);
+
+        return true;
+      }
+
+      return observableThrowError('Unauthorized');
+    }), catchError((err, caught) => { return new Observable<any>(err) }));
   }
 
   setAuth(auth: TokenResponse | null) : boolean {
@@ -66,6 +82,8 @@ export class AuthService {
   refreshToken() : Observable<boolean> {
     var url = "api/token/auth";
     var data = {
+      Username: null,
+      Password: null,
       ClientId: this.clientId,
       GrantType: "refresh_token",
       Scope: "offline_access profile email",
@@ -73,19 +91,5 @@ export class AuthService {
     };
 
     return this.getAuthFromServer(url, data);
-  }
-
-  getAuthFromServer(url: string, data: any) : Observable<boolean>{
-    return this.http.post<TokenResponse>(url, data).pipe(map((result) => {
-      let token = result && result.token;
-
-      if (token) {
-        this.setAuth(result);
-
-        return true;
-      }
-
-      return observableThrowError('Unauthorized');
-    }), catchError((err, caught) => { return new Observable<any>(err) }));
   }
 }

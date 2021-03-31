@@ -24,12 +24,27 @@ namespace TestCreator.Tests.Controllers
 
         private TestController _sut;
 
+        private readonly string _username = "username1";
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             _mockRepo = new Mock<ITestRepository>();
             _mockHub = new Mock<IHubContext<TestsHub, ITestsHubClient>>();
             _sut = new TestController(_mockRepo.Object, _mockHub.Object);
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, _username)
+            }, "mock"));
+
+            _sut = new TestController(_mockRepo.Object, _mockHub.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext { User = user }
+                }
+            };
         }
 
         [Test]
@@ -39,7 +54,8 @@ namespace TestCreator.Tests.Controllers
             var test = new Test
             {
                 Id = 1,
-                Title = "title1"
+                Title = "title1",
+                UserId = _username
             };
 
             _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
@@ -49,6 +65,28 @@ namespace TestCreator.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
             Assert.AreEqual(result.GetValueFromJsonResult<int>("Id"), test.Id);
+            Assert.AreEqual(result.GetValueFromJsonResult<bool>("UserCanEdit"), true);
+        }
+
+        [Test]
+        public void Get_WhenCorrectIdGivenButCurrentUserIsNotOwnerOfTest_ShouldReturnJsonViewModel()
+        {
+            var testId = 1;
+            var test = new Test
+            {
+                Id = 1,
+                Title = "title1",
+                UserId = "user1"
+            };
+
+            _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
+
+            var result = _sut.Get(testId).Result as JsonResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
+            Assert.AreEqual(result.GetValueFromJsonResult<int>("Id"), test.Id);
+            Assert.AreEqual(result.GetValueFromJsonResult<bool>("UserCanEdit"), false);
         }
 
         [Test]
@@ -76,20 +114,7 @@ namespace TestCreator.Tests.Controllers
             _mockRepo.Setup(x => x.CreateTest(It.Is<Test>(t => t.Id == testId))).Returns(Task.FromResult(test));
             _mockHub.Setup(x => x.Clients.All.TestCreated()).Returns(Task.CompletedTask);
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, "name1")
-            }, "mock"));
-
-            var controller = new TestController(_mockRepo.Object, _mockHub.Object)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext { User = user }
-                }
-            };
-
-            var result = controller.Post(test.Adapt<TestViewModel>()).Result as JsonResult;
+            var result = _sut.Post(test.Adapt<TestViewModel>()).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
@@ -112,9 +137,11 @@ namespace TestCreator.Tests.Controllers
             var test = new Test
             {
                 Id = 1,
-                Title = "title1"
+                Title = "title1",
+                UserId = _username
             };
 
+            _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
             _mockRepo.Setup(x => x.UpdateTest(It.Is<Test>(t => t.Id == testId))).Returns(Task.FromResult(test));
 
             var result = _sut.Put(test.Adapt<TestViewModel>()).Result as JsonResult;
@@ -134,14 +161,16 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Put_WhenCorrectTestAttemptViewModelErrorDuringProcessing_ShouldReturnsNotFound()
+        public void Put_WhenCorrectTestViewModelErrorDuringProcessing_ShouldReturnsNotFound()
         {
             var test = new Test
             {
                 Id = 1,
-                Title = "title1"
+                Title = "title1",
+                UserId = _username
             };
 
+            _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
             _mockRepo.Setup(x => x.UpdateTest(test)).Returns<TestViewModel>(null);
 
             var result = _sut.Put(test.Adapt<TestViewModel>()).Result;
@@ -151,10 +180,70 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
+        public void Put_WhenCorrectTestViewModelButUserIsNotPermittedToEdit_ShouldReturnUnauthorized()
+        {
+            var test = new Test
+            {
+                Id = 1,
+                Title = "title1",
+                UserId = "user1"
+            };
+
+            _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
+
+            var result = _sut.Put(test.Adapt<TestViewModel>()).Result;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<UnauthorizedResult>(result);
+        }
+
+        [Test]
+        public void Put_WhenCorrectTestViewModelUserIsNotPermittedToDeleteButIsAdmin_ShouldReturnOkResult()
+        {
+            var testId = 2;
+            var test = new Test
+            {
+                Id = testId,
+                Title = "title1",
+                UserId = "user1"
+            };
+
+            _mockRepo.Setup(x => x.UpdateTest(It.Is<Test>(t => t.Id == testId))).Returns(Task.FromResult(test));
+            _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, _username),
+                new Claim(ClaimTypes.Role, "Admin"),
+            }, "mock"));
+
+            var controller = new TestController(_mockRepo.Object, _mockHub.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext { User = user }
+                }
+            };
+
+            var result = controller.Put(test.Adapt<TestViewModel>()).Result as JsonResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
+            Assert.AreEqual(result.GetValueFromJsonResult<int>("Id"), test.Id);
+        }
+
+        [Test]
         public void Delete_WhenCorrectViewModelGiven_ShouldReturnJsonViewModel()
         {
             var testId = 1;
+            var test = new Test
+            {
+                Id = testId,
+                Title = "title1",
+                UserId = _username
+            };
 
+            _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
             _mockRepo.Setup(x => x.DeleteTest(testId)).Returns(Task.FromResult(true));
             _mockHub.Setup(x => x.Clients.All.TestRemoved(It.IsAny<int>())).Returns(Task.CompletedTask);
 
@@ -165,15 +254,102 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Delete_CorrectTestAttemptViewModelErrorDuringProcessing_ReturnsNotFound()
+        public void Delete_CorrectTestIdButErrorDuringProcessing_ReturnsNotFound()
         {
             var testId = 2;
+            var test = new Test
+            {
+                Id = testId,
+                Title = "title1",
+                UserId = _username
+            };
+
             _mockRepo.Setup(x => x.DeleteTest(testId)).Returns(Task.FromResult(false));
+            _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
 
             var result = _sut.Delete(testId).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
+        }
+
+        [Test]
+        public void Delete_WhenCorrectTestIdButUserIsNotPermittedToDelete_ShouldReturnUnauthorized()
+        {
+            var testId = 2;
+            var test = new Test
+            {
+                Id = testId,
+                Title = "title1",
+                UserId = "user1"
+            };
+
+            _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
+
+            var result = _sut.Delete(testId).Result;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<UnauthorizedResult>(result);
+        }
+
+        [Test]
+        public void Delete_WhenCorrectTestIdButUserIsNotPermittedToDeleteButIsAdmin_ShouldReturnOkResult()
+        {
+            var testId = 2;
+            var test = new Test
+            {
+                Id = testId,
+                Title = "title1",
+                UserId = "user1"
+            };
+
+            _mockRepo.Setup(x => x.DeleteTest(testId)).Returns(Task.FromResult(true));
+            _mockRepo.Setup(x => x.GetTest(testId)).Returns(Task.FromResult(test));
+            _mockHub.Setup(x => x.Clients.All.TestRemoved(It.IsAny<int>())).Returns(Task.CompletedTask);
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, _username),
+                new Claim(ClaimTypes.Role, "Admin"), 
+            }, "mock"));
+
+            var controller = new TestController(_mockRepo.Object, _mockHub.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext { User = user }
+                }
+            };
+
+            var result = controller.Delete(testId).Result;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<NoContentResult>(result);
+        }
+
+        [Test]
+        public void Patch_WhenCorrectIdGiven_ShouldReturnOkResult()
+        {
+            var testId = 1;
+
+            _mockRepo.Setup(x => x.IncrementTestViewCount(It.Is<int>(t => t == testId))).Returns(Task.FromResult(true));
+
+            var result = _sut.Patch(testId).Result as OkResult;
+
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Patch_WhenCorrectIdAndErrorDuringProcessing_ShouldReturnStatusCode500()
+        {
+            var testId = 2;
+
+            _mockRepo.Setup(x => x.IncrementTestViewCount(testId)).Returns(Task.FromResult(false));
+
+            var result = _sut.Put(null).Result as StatusCodeResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 500);
         }
     }
 }

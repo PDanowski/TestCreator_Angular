@@ -14,5 +14,6 @@ namespace TestCreator.Data.Repositories.Interfaces
         Task<Test> CreateTest(Test test);
         Task<Test> UpdateTest(Test test);
         Task<bool> DeleteTest(int id);
+        Task<bool> IncrementTestViewCount(int id);
     }
 }

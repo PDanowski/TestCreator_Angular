@@ -39,7 +39,6 @@ namespace TestCreator.WebApp.Controllers
                     Error = $"Test with identifier {id} was not found"
                 });
             }
-
             return new JsonResult(viewModel, JsonSettings);
         }
 

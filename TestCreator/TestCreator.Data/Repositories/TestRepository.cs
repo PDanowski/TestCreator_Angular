@@ -84,12 +84,28 @@ namespace TestCreator.Data.Repositories
             testToUpdate.Description = test.Description;
             testToUpdate.Text = test.Text;
             testToUpdate.Notes = test.Notes;
-
-            test.LastModificationDate = DateTime.Now;
+            testToUpdate.ViewCount = test.ViewCount;
+            testToUpdate.LastModificationDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
             return testToUpdate;
+        }
+
+        public async Task<bool> IncrementTestViewCount(int id)
+        {
+            var testToUpdate = await _context.Tests.FirstOrDefaultAsync(t => t.Id.Equals(id));
+
+            if (testToUpdate == null)
+            {
+                return false;
+            }
+
+            testToUpdate.ViewCount++;
+
+            testToUpdate.LastModificationDate = DateTime.Now;
+
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> DeleteTest(int id)

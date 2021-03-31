@@ -3,4 +3,6 @@ export interface Test {
   Title: string;
   Decription: string;
   Text : string;
+  UserCanEdit : boolean;
+  ViewCount : number;
 }

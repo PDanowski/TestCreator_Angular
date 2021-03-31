@@ -13,8 +13,6 @@ using TestCreator.WebApp.Broadcast.Interfaces;
 using TestCreator.WebApp.Controllers.Attributes;
 using TestCreator.WebApp.ViewModels;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace TestCreator.WebApp.Controllers
 {
     public class TestController : BaseApiController
@@ -49,7 +47,11 @@ namespace TestCreator.WebApp.Controllers
                 });
             }
 
-            return new JsonResult(test.Adapt<TestViewModel>(), JsonSettings);
+            var testViewModel = test.Adapt<TestViewModel>();
+            testViewModel.UserCanEdit =
+                test.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
+
+            return new JsonResult(testViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -57,6 +59,7 @@ namespace TestCreator.WebApp.Controllers
         /// </summary>
         /// <param name="viewModel">TestViewModel with data</param>
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Put([FromBody] TestViewModel viewModel)
         {
             if (viewModel == null)
@@ -64,7 +67,14 @@ namespace TestCreator.WebApp.Controllers
                 return new StatusCodeResult(500);
             }
 
+            if ((await _repository.GetTest(viewModel.Id)).UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                && !User.IsInRole("Admin"))
+            {
+                return new UnauthorizedResult();
+            }
+
             var updatedTest = await _repository.UpdateTest(viewModel.Adapt<Test>());
+
             if (updatedTest == null)
             {
                 return NotFound(new
@@ -72,7 +82,12 @@ namespace TestCreator.WebApp.Controllers
                     Error = $"Error during updating test with identifier {viewModel.Id}"
                 });
             }
-            return new JsonResult(updatedTest.Adapt<TestViewModel>(), JsonSettings);
+
+            var updatedTestViewModel = updatedTest.Adapt<TestViewModel>();
+            updatedTestViewModel.UserCanEdit =
+                updatedTest.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
+
+            return new JsonResult(updatedTestViewModel, JsonSettings);
         }
 
         /// <summary>
@@ -87,11 +102,37 @@ namespace TestCreator.WebApp.Controllers
             {
                 return new StatusCodeResult(500);
             }
+            
+            var testModel = viewModel.Adapt<Test>();
+            testModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            viewModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var createdTest = await _repository.CreateTest(viewModel.Adapt<Test>());
+
+            var createdTestViewModel = createdTest.Adapt<TestViewModel>();
+            createdTestViewModel.UserCanEdit = true;
+
             await _hubContext.Clients.All.TestCreated();
-            return new JsonResult(createdTest.Adapt<TestViewModel>(), JsonSettings);
+
+            return new JsonResult(createdTestViewModel, JsonSettings);
+        }
+
+        /// <summary>
+        /// PATCH: api/test/patch
+        /// </summary>
+        /// <param name="id">Test identifier</param>
+        [HttpPatch("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Patch(int id)
+        {
+            var updatedTest = await _repository.IncrementTestViewCount(id);
+            if (!updatedTest)
+            {
+                return NotFound(new
+                {
+                    Error = $"Error during patching test with identifier {id}"
+                });
+            }
+            return Ok();
         }
 
         /// <summary>
@@ -102,6 +143,12 @@ namespace TestCreator.WebApp.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
+            if ((await _repository.GetTest(id)).UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                && !User.IsInRole("Admin"))
+            {
+                return new UnauthorizedResult();
+            }
+
             if (await _repository.DeleteTest(id))
             {
                 await _hubContext.Clients.All.TestRemoved(id);
