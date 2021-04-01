@@ -98,13 +98,13 @@ namespace TestCreator.Data.Repositories
 
             if (testToUpdate == null)
             {
-                return false;
+                throw new Exception($"Test with id: {id} not found.");
             }
 
             testToUpdate.ViewCount++;
 
             testToUpdate.LastModificationDate = DateTime.Now;
-
+            
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -114,7 +114,7 @@ namespace TestCreator.Data.Repositories
 
             if (test == null)
             {
-                return false;
+                throw new Exception($"Test with id: {id} not found.");
             }
 
             _context.Tests.Remove(test);

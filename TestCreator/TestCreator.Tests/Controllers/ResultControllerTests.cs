@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
@@ -127,9 +128,27 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Post_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
+        public void Post_WhenInvalidViewModelGiven_ShouldReturnBadRequest()
         {
-            var result = _sut.Post(null).Result as StatusCodeResult;
+            var result = _sut.Post(null).Result as BadRequestResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 400);
+        }
+
+        [Test]
+        public void Post_WhenErrorDuringProcessing_ShouldReturnStatusCode500()
+        {
+            var resultId = 1;
+            var resultModel = new Result
+            {
+                Id = resultId,
+                Text = "Text1"
+            };
+
+            _mockRepo.Setup(x => x.CreateResult(It.Is<Result>(r => r.Id == resultId))).Throws(new Exception());
+
+            var result = _sut.Post(resultModel.Adapt<ResultViewModel>()).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -155,12 +174,30 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Put_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
+        public void Put_WhenErrorDuringProcessing_ShouldReturnStatusCode500()
         {
-            var result = _sut.Put(null).Result as StatusCodeResult;
+            var resultId = 1;
+            var resultModel = new Result
+            {
+                Id = resultId,
+                Text = "Text1"
+            };
+
+            _mockRepo.Setup(x => x.UpdateResult(It.Is<Result>(r => r.Id == resultId))).Throws(new Exception());
+
+            var result = _sut.Put(resultModel.Adapt<ResultViewModel>()).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
+        }
+
+        [Test]
+        public void Put_WhenInvalidViewModelGiven_ShouldReturnBadRequest()
+        {
+            var result = _sut.Put(null).Result as BadRequestResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 400);
         }
 
         [Test]
