@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -17,9 +17,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Clean
+      run: dotnet clean TestCreator\TestCreator.sln --configuration Release && dotnet nuget locals all --clear
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: TestCreator
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build TestCreator\TestCreator.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test TestCreator\TestCreator.sln --no-restore --verbosity normal
