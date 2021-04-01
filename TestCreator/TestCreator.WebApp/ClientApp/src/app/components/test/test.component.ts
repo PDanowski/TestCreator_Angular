@@ -34,6 +34,10 @@ export class TestComponent {
       var url = this.baseUrl + "api/test/" + id;
       this.http.get<Test>(url).subscribe(result => {
           this.test = result;
+
+          var patchUrl = this.baseUrl + "api/test/";
+          this.http.patch(patchUrl, { Id: this.test.Id }).subscribe(() => {},
+            error => console.error(error));
         },
         error => console.error(error));
     } else {

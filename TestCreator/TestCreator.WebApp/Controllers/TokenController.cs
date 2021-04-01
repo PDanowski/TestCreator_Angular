@@ -26,95 +26,89 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
-                return new StatusCodeResult(500);
+                return new BadRequestResult();
             }
 
-            switch (viewModel.GrantType)
+            try
             {
-                case "password":
-                    return await GetToken(viewModel);
-                case "refresh_token":
-                    return await RefreshToken(viewModel);
-                default:
-                    return new UnauthorizedResult();
+                switch (viewModel.GrantType)
+                {
+                    case "password":
+                        return await GetToken(viewModel);
+                    case "refresh_token":
+                        return await RefreshToken(viewModel);
+                    default:
+                        return new UnauthorizedResult();
+                }
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
             }
         }
 
         private async Task<IActionResult> RefreshToken(TokenRequestViewModel viewModel)
         {
-            try
-            {
-                var refreshToken =
+            var refreshToken =
                     await _tokenRepository.CheckRefreshTokenForClient(viewModel.ClientId, viewModel.RefreshToken);
 
-                if (refreshToken == null)
-                {
-                    return new UnauthorizedResult();
-                }
-
-                var user = await _userAndRoleRepository.GetUserById(refreshToken.UserId);
-
-                if (user == null)
-                {
-                    return new UnauthorizedResult();
-                }
-
-                var newRefreshToken = _tokenService.GenerateRefreshToken(refreshToken.ClientId, refreshToken.UserId);
-                await _tokenRepository.RemoveRefreshToken(refreshToken);
-                await _tokenRepository.AddRefreshToken(newRefreshToken);
-
-                var tokenData = _tokenService.CreateAccessToken(newRefreshToken.UserId);
-
-                var response = new TokenResponseViewModel
-                {
-                    Expiration = tokenData.ExporationTimeInMinutes,
-                    RefreshToken = newRefreshToken.Value,
-                    Token = tokenData.EncodedToken
-                };
-
-                return Json(response);
-            }
-            catch (Exception ex)
+            if (refreshToken == null)
             {
                 return new UnauthorizedResult();
             }
+
+            var user = await _userAndRoleRepository.GetUserById(refreshToken.UserId);
+
+            if (user == null)
+            {
+                return new UnauthorizedResult();
+            }
+
+            var newRefreshToken = _tokenService.GenerateRefreshToken(refreshToken.ClientId, refreshToken.UserId);
+            await _tokenRepository.RemoveRefreshToken(refreshToken);
+            await _tokenRepository.AddRefreshToken(newRefreshToken);
+
+            var tokenData = _tokenService.CreateAccessToken(newRefreshToken.UserId);
+
+            var response = new TokenResponseViewModel
+            {
+                Expiration = tokenData.ExporationTimeInMinutes,
+                RefreshToken = newRefreshToken.Value,
+                Token = tokenData.EncodedToken
+            };
+
+            return Json(response);
+
         }
- 
+
         private async Task<IActionResult> GetToken(TokenRequestViewModel viewModel)
         {
-            try
+            var user = await _userAndRoleRepository.GetUserByNameAsync(viewModel.Username);
+
+            if (user == null && viewModel.Username.Contains("@"))
             {
-                var user = await _userAndRoleRepository.GetUserByNameAsync(viewModel.Username);
-
-                if (user == null && viewModel.Username.Contains("@"))
-                {
-                    user = await _userAndRoleRepository.GetUserByEmailAsync(viewModel.Username);
-                }
-
-                if (user == null || !await _userAndRoleRepository.CheckPasswordAsync(user, viewModel.Password))
-                {
-                    return new UnauthorizedResult();
-                }
-
-                var token = _tokenService.GenerateRefreshToken(viewModel.ClientId, user.Id);
-
-                await _tokenRepository.AddRefreshToken(token);
-
-                var accessTokenData = _tokenService.CreateAccessToken(user.Id);
-
-                var response = new TokenResponseViewModel
-                {
-                    Token = accessTokenData.EncodedToken,
-                    Expiration = accessTokenData.ExporationTimeInMinutes,
-                    RefreshToken = token.Value
-                };
-
-                return Json(response);
+                user = await _userAndRoleRepository.GetUserByEmailAsync(viewModel.Username);
             }
-            catch (Exception ex)
+
+            if (user == null || !await _userAndRoleRepository.CheckPasswordAsync(user, viewModel.Password))
             {
                 return new UnauthorizedResult();
             }
+
+            var token = _tokenService.GenerateRefreshToken(viewModel.ClientId, user.Id);
+
+            await _tokenRepository.AddRefreshToken(token);
+
+            var accessTokenData = _tokenService.CreateAccessToken(user.Id);
+
+            var response = new TokenResponseViewModel
+            {
+                Token = accessTokenData.EncodedToken,
+                Expiration = accessTokenData.ExporationTimeInMinutes,
+                RefreshToken = token.Value
+            };
+
+            return Json(response);
         }
     }
 }

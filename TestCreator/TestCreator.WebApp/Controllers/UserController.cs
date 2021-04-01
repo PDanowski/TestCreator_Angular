@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Constants;
@@ -26,25 +27,33 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
+                return new BadRequestResult();
+            }
+
+            try
+            {
+                ApplicationUser user = await _userAndRoleRepository.GetUserByNameAsync(viewModel.UserName);
+                if (user != null)
+                {
+                    return BadRequest("User with given username already exists");
+                }
+
+                user = await _userAndRoleRepository.GetUserByEmailAsync(viewModel.Email);
+                if (user != null)
+                {
+                    return BadRequest("User with given e-mail already exists");
+                }
+
+                var createdUser = await _userAndRoleRepository.CreateUserAndAddToRolesAsync(
+                    viewModel.Adapt<ApplicationUser>(),
+                    new[] {UserRoles.RegisteredUser});
+
+                return Json(createdUser.Adapt<UserViewModel>(), JsonSettings);
+            }
+            catch (Exception e)
+            {
                 return new StatusCodeResult(500);
             }
-
-            ApplicationUser user = await _userAndRoleRepository.GetUserByNameAsync(viewModel.UserName);
-            if (user != null)
-            {
-                return BadRequest("User with given username already exists");
-            }
-
-            user = await _userAndRoleRepository.GetUserByEmailAsync(viewModel.Email);
-            if (user != null)
-            {
-                return BadRequest("User with given e-mail already exists");
-            }
-
-            var createdUser = await _userAndRoleRepository.CreateUserAndAddToRolesAsync(viewModel.Adapt<ApplicationUser>(), 
-                new[] {UserRoles.RegisteredUser});
-
-            return Json(createdUser.Adapt<UserViewModel>(), JsonSettings);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.Converters.Interfaces;
@@ -29,17 +30,24 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            var test = await _repository.GetTestWithInclude(id);
-            var viewModel = _converter.Convert(test);
-
-            if (viewModel == null)
+            try
             {
-                return NotFound(new
+                var test = await _repository.GetTestWithInclude(id);
+                var viewModel = _converter.Convert(test);
+
+                if (viewModel == null)
                 {
-                    Error = $"Test with identifier {id} was not found"
-                });
+                    return NotFound(new
+                    {
+                        Error = $"Test with identifier {id} was not found"
+                    });
+                }
+                return new JsonResult(viewModel, JsonSettings);
             }
-            return new JsonResult(viewModel, JsonSettings);
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
 
@@ -53,20 +61,24 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
-                return NotFound(new
-                {
-                    Error = $"Error - argument is NULL"
-                });
+                return new BadRequestResult();
             }
 
-            var resultViewModel = _service.CalculateResult(viewModel);
+            try
+            {
+                var resultViewModel = _service.CalculateResult(viewModel);
 
-            if (resultViewModel == null)
+                if (resultViewModel == null)
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                return new JsonResult(resultViewModel, JsonSettings);
+            }
+            catch (Exception e)
             {
                 return new StatusCodeResult(500);
             }
-
-            return new JsonResult(resultViewModel, JsonSettings);
         }
     }
 }

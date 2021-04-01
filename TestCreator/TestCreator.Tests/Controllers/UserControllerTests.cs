@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -105,12 +106,36 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Post_WhenInvalidViewModelGiven_ShouldReturnStatusCode500()
+        public void Post_WhenErrorDuringProcessing_ShouldReturnStatusCode500()
         {
-            var result = _sut.Post(null).Result as StatusCodeResult;
+            var viewModel = new UserViewModel
+            {
+                Email = "user1@wp.pl",
+                UserName = "user1",
+                Password = "password123"
+            };
+            var user = new ApplicationUser
+            {
+                UserName = viewModel.UserName,
+                Email = viewModel.Email
+            };
+
+            _mockRepo.Setup(x => x.GetUserByNameAsync(It.IsAny<string>()))
+                .Throws(new Exception());
+
+            var result = _sut.Post(viewModel).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
+        }
+
+        [Test]
+        public void Post_WhenInvalidViewModelGiven_ShouldReturnBadRequest()
+        {
+            var result = _sut.Post(null).Result as BadRequestResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 400);
         }
     }
 }

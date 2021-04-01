@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Mapster;
@@ -29,17 +30,24 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _repository.GetResult(id);
-
-            if (result == null)
+            try
             {
-                return NotFound(new
-                {
-                    Error = $"Result with identifier {id} was not found"
-                });
-            }
+                var result = await _repository.GetResult(id);
 
-            return new JsonResult(result.Adapt<ResultViewModel>(), JsonSettings);
+                if (result == null)
+                {
+                    return NotFound(new
+                    {
+                        Error = $"Result with identifier {id} was not found"
+                    });
+                }
+
+                return new JsonResult(result.Adapt<ResultViewModel>(), JsonSettings);
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -52,18 +60,25 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
-                return new StatusCodeResult(500);
+                return new BadRequestResult();
             }
 
-            var updatedResult = await _repository.UpdateResult(viewModel.Adapt<Result>());
-            if (updatedResult == null)
+            try
             {
-                return NotFound(new
+                var updatedResult = await _repository.UpdateResult(viewModel.Adapt<Result>());
+                if (updatedResult == null)
                 {
-                    Error = $"Error during updating result with identifier {viewModel.Id}"
-                });
+                    return NotFound(new
+                    {
+                        Error = $"Error during updating result with identifier {viewModel.Id}"
+                    });
+                }
+                return new JsonResult(updatedResult.Adapt<ResultViewModel>(), JsonSettings);
             }
-            return new JsonResult(updatedResult.Adapt<ResultViewModel>(), JsonSettings);
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -76,11 +91,18 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
-                return new StatusCodeResult(500);
+                return new BadRequestResult();
             }
 
-            var createdResult = await _repository.CreateResult(viewModel.Adapt<Result>());
-            return new JsonResult(createdResult.Adapt<ResultViewModel>(), JsonSettings);
+            try
+            {
+                var createdResult = await _repository.CreateResult(viewModel.Adapt<Result>());
+                return new JsonResult(createdResult.Adapt<ResultViewModel>(), JsonSettings);
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -91,14 +113,21 @@ namespace TestCreator.WebApp.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
-            if (await _repository.DeleteResult(id))
+            try
             {
-                return new NoContentResult();
+                if (await _repository.DeleteResult(id))
+                {
+                    return new NoContentResult();
+                }
+                return NotFound(new
+                {
+                    Error = $"Error during deletion question with identifier {id}"
+                });
             }
-            return NotFound(new
+            catch (Exception e)
             {
-                Error = $"Error during deletion question with identifier {id}"
-            });
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -109,17 +138,24 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetByTestId([Required][FromQuery(Name = "testId")] int testId)
         {
-            var results = await _repository.GetResults(testId);
-
-            if (results == null)
+            try
             {
-                return NotFound(new
-                {
-                    Error = $"Results for test with identifier {testId} were not found"
-                });
-            }
+                var results = await _repository.GetResults(testId);
 
-            return new JsonResult(results.Adapt<List<ResultViewModel>>(), JsonSettings);
+                if (results == null)
+                {
+                    return NotFound(new
+                    {
+                        Error = $"Results for test with identifier {testId} were not found"
+                    });
+                }
+
+                return new JsonResult(results.Adapt<List<ResultViewModel>>(), JsonSettings);
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
     }
 }

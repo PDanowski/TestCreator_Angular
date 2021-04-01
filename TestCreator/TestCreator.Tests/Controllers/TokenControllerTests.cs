@@ -16,7 +16,7 @@ namespace TestCreator.Tests.Controllers
     public class TokenControllerTests
     {
         [Test]
-        public void Auth_BodyViewModelWithPasswordGrantTypeAndUserName_ReturnsTokenResponse()
+        public void Auth_WhenBodyViewModelWithPasswordGrantTypeAndUserName_ShouldReturnTokenResponse()
         {
             var username = "username1";
             var userId = Guid.NewGuid().ToString();
@@ -51,9 +51,9 @@ namespace TestCreator.Tests.Controllers
             };
 
 
-            var mockServie = new Mock<ITokenService>();
-            mockServie.Setup(x => x.GenerateRefreshToken(clientId, userId)).Returns(token);
-            mockServie.Setup(x => x.CreateAccessToken(userId)).Returns(tokenData);
+            var mockService = new Mock<ITokenService>();
+            mockService.Setup(x => x.GenerateRefreshToken(clientId, userId)).Returns(token);
+            mockService.Setup(x => x.CreateAccessToken(userId)).Returns(tokenData);
 
             var mockUserAndRolesRepo = new Mock<IUserAndRoleRepository>();
             mockUserAndRolesRepo.Setup(x => x.GetUserByNameAsync(username)).Returns(Task.FromResult(user));
@@ -63,7 +63,7 @@ namespace TestCreator.Tests.Controllers
             mockTokenRepo.Setup(x => x.AddRefreshToken(It.IsAny<Token>())).Verifiable();
 
 
-            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, mockServie.Object);
+            var controller = new TokenController(mockUserAndRolesRepo.Object, mockTokenRepo.Object, mockService.Object);
 
             var result = controller.Auth(viewModel).Result as JsonResult;
 
@@ -79,9 +79,8 @@ namespace TestCreator.Tests.Controllers
             Assert.AreEqual(result.Value.ToString(), json.Value.ToString());
         }
 
-
         [Test]
-        public void Auth_BodyViewModelWithPasswordGrantTypeAndEmail_ReturnsTokenResponse()
+        public void Auth_WhenBodyViewModelWithPasswordGrantTypeAndEmail_ShouldReturnTokenResponse()
         {
             var username = "username1@wp.pl";
             var userId = Guid.NewGuid().ToString();
@@ -146,7 +145,7 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Auth_BodyViewModelWithPasswordGrantTypeWrongPassword_ReturnsUnauthorizedResult()
+        public void Auth_WhenBodyViewModelWithPasswordGrantTypeWrongPassword_ShouldReturnUnauthorizedResult()
         {
             var username = "username1@wp.pl";
             var userId = Guid.NewGuid().ToString();
@@ -180,18 +179,18 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Auth_NullBodyViewModel_ReturnsStatusCode500()
+        public void Auth_WhenNullViewModel_ShouldReturnBadRequest()
         {
             var controller = new TokenController(null, null, null);
 
-            var result = controller.Auth(null).Result as StatusCodeResult;
+            var result = controller.Auth(null).Result as BadRequestResult;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.StatusCode, 500);
+            Assert.AreEqual(result.StatusCode, 400);
         }
 
         [Test]
-        public void Auth_BodyViewModelWithRefreshTokenGrantTypeAndUserName_ReturnsTokenResponse()
+        public void Auth_WhenBodyViewModelWithRefreshTokenGrantTypeAndUserName_ShouldReturnTokenResponse()
         {
             var username = "username1";
             var userId = Guid.NewGuid().ToString();
@@ -265,7 +264,7 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Auth_BodyViewModelWithRefreshTokenGrantTypeAndWrongUserName_ReturnsUnauthorizedResult()
+        public void Auth_WhenBodyViewModelWithRefreshTokenGrantTypeAndWrongUserName_ShouldReturnUnauthorizedResult()
         {
             var username = "username1";
             var userId = Guid.NewGuid().ToString();
@@ -301,7 +300,7 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Auth_BodyViewModelWithRefreshTokenGrantTypeAndInvalidRefreshToken_ReturnsUnauthorizedResult()
+        public void Auth_WhenBodyViewModelWithRefreshTokenGrantTypeAndInvalidRefreshToken_ShouldReturnUnauthorizedResult()
         {
             var username = "username1";
             var clientId = Guid.NewGuid().ToString();
@@ -324,7 +323,7 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void Auth_InvalidViewModelWithRefreshTokenGrantType_ReturnsUnauthorizedResult()
+        public void Auth_WhenInvalidViewModelWithRefreshTokenGrantType_ShouldReturnUnauthorizedResult()
         {
             TokenRequestViewModel viewModel = new TokenRequestViewModel
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -108,12 +109,34 @@ namespace TestCreator.Tests.Controllers
         }
 
         [Test]
-        public void CalculateResult_WhenNullTestAttemptViewModel_ShouldReturnNotFound()
+        public void CalculateResult_WhenNullTestAttemptViewModel_ShouldReturnBadRequest()
+        {
+            var viewModel = new TestAttemptViewModel()
+            {
+                TestId = 1,
+                Title = "title1",
+                TestAttemptEntries = new List<TestAttemptEntryViewModel>
+                {
+                    new TestAttemptEntryViewModel()
+                }
+            };
+
+            _mockService.Setup(x => x.CalculateResult(It.IsAny<TestAttemptViewModel>()))
+                .Throws(new Exception());
+
+            var result = _sut.CalculateResult(viewModel) as StatusCodeResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, 500);
+        }
+
+        [Test]
+        public void CalculateResult_WhenErrorDuringProcessing_ShouldReturnBadRequest()
         {
             var result = _sut.CalculateResult(null);
 
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<NotFoundObjectResult>(result);
+            Assert.IsInstanceOf<BadRequestResult>(result);
         }
 
         [Test]

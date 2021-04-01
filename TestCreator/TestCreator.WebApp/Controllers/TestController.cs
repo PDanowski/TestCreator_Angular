@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Mapster;
@@ -37,21 +38,28 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var test = await _repository.GetTest(id);
-
-            if (test == null)
+            try
             {
-                return NotFound(new
+                var test = await _repository.GetTest(id);
+
+                if (test == null)
                 {
-                    Error = $"Test with identifier {id} was not found"
-                });
+                    return NotFound(new
+                    {
+                        Error = $"Test with identifier {id} was not found"
+                    });
+                }
+
+                var testViewModel = test.Adapt<TestViewModel>();
+                testViewModel.UserCanEdit =
+                    test.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
+
+                return new JsonResult(testViewModel, JsonSettings);
             }
-
-            var testViewModel = test.Adapt<TestViewModel>();
-            testViewModel.UserCanEdit =
-                test.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
-
-            return new JsonResult(testViewModel, JsonSettings);
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -64,7 +72,7 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
-                return new StatusCodeResult(500);
+                return new BadRequestResult();
             }
 
             if ((await _repository.GetTest(viewModel.Id)).UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value
@@ -73,21 +81,28 @@ namespace TestCreator.WebApp.Controllers
                 return new UnauthorizedResult();
             }
 
-            var updatedTest = await _repository.UpdateTest(viewModel.Adapt<Test>());
-
-            if (updatedTest == null)
+            try
             {
-                return NotFound(new
+                var updatedTest = await _repository.UpdateTest(viewModel.Adapt<Test>());
+
+                if (updatedTest == null)
                 {
-                    Error = $"Error during updating test with identifier {viewModel.Id}"
-                });
+                    return NotFound(new
+                    {
+                        Error = $"Error during updating test with identifier {viewModel.Id}"
+                    });
+                }
+
+                var updatedTestViewModel = updatedTest.Adapt<TestViewModel>();
+                updatedTestViewModel.UserCanEdit =
+                    updatedTest.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
+
+                return new JsonResult(updatedTestViewModel, JsonSettings);
             }
-
-            var updatedTestViewModel = updatedTest.Adapt<TestViewModel>();
-            updatedTestViewModel.UserCanEdit =
-                updatedTest.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
-
-            return new JsonResult(updatedTestViewModel, JsonSettings);
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -100,39 +115,54 @@ namespace TestCreator.WebApp.Controllers
         {
             if (viewModel == null)
             {
+                return new BadRequestResult();
+            }
+
+            try
+            {
+                var testModel = viewModel.Adapt<Test>();
+                testModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var createdTest = await _repository.CreateTest(viewModel.Adapt<Test>());
+
+                var createdTestViewModel = createdTest.Adapt<TestViewModel>();
+                createdTestViewModel.UserCanEdit = true;
+
+                await _hubContext.Clients.All.TestCreated();
+
+                return new JsonResult(createdTestViewModel, JsonSettings);
+            }
+            catch (Exception e)
+            {
                 return new StatusCodeResult(500);
             }
-            
-            var testModel = viewModel.Adapt<Test>();
-            testModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var createdTest = await _repository.CreateTest(viewModel.Adapt<Test>());
-
-            var createdTestViewModel = createdTest.Adapt<TestViewModel>();
-            createdTestViewModel.UserCanEdit = true;
-
-            await _hubContext.Clients.All.TestCreated();
-
-            return new JsonResult(createdTestViewModel, JsonSettings);
         }
 
         /// <summary>
         /// PATCH: api/test/patch
         /// </summary>
-        /// <param name="id">Test identifier</param>
-        [HttpPatch("{id}")]
+        /// <param name="viewModel">UpdateTestViewCountViewModel with data</param>
+        [HttpPatch]
         [AllowAnonymous]
-        public async Task<IActionResult> Patch(int id)
+        public async Task<IActionResult> UpdateTestViewCount([FromBody] UpdateTestViewCountViewModel viewModel)
         {
-            var updatedTest = await _repository.IncrementTestViewCount(id);
-            if (!updatedTest)
+            if (viewModel == null)
             {
-                return NotFound(new
-                {
-                    Error = $"Error during patching test with identifier {id}"
-                });
+                return new BadRequestResult();
             }
-            return Ok();
+
+            try
+            {
+                if (!await _repository.IncrementTestViewCount(viewModel.Id))
+                {
+                    throw new Exception($"Error during updating test ith id: {viewModel.Id}");
+                }
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -143,21 +173,25 @@ namespace TestCreator.WebApp.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
-            if ((await _repository.GetTest(id)).UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
-                && !User.IsInRole("Admin"))
+            try
             {
-                return new UnauthorizedResult();
-            }
+                if ((await _repository.GetTest(id)).UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    && !User.IsInRole("Admin"))
+                {
+                    return new UnauthorizedResult();
+                }
 
-            if (await _repository.DeleteTest(id))
-            {
+                if (!await _repository.DeleteTest(id))
+                {
+                    throw new Exception($"Error during deleting test ith id: {id}");
+                }
                 await _hubContext.Clients.All.TestRemoved(id);
                 return new NoContentResult();
             }
-            return NotFound(new
+            catch (Exception e)
             {
-                Error = $"Error during deletion test with identifier {id}"
-            });
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -169,29 +203,36 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBySorting([FromQuery] int sorting, [FromQuery] int? size = 10)
         {
-            TestsOrder order;
-
-            switch (sorting)
+            try
             {
-                case 0:
-                    order = TestsOrder.Random;
-                    break;
-                case 1:
-                    order = TestsOrder.Latest;
-                    break;
-                case 2:
-                    order = TestsOrder.ByTitle;
-                    break;
-                default:
-                    return NotFound(new
-                    {
-                        Error = $"Sorting parameter has wrong value: {sorting}"
-                    });
+                TestsOrder order;
+
+                switch (sorting)
+                {
+                    case 0:
+                        order = TestsOrder.Random;
+                        break;
+                    case 1:
+                        order = TestsOrder.Latest;
+                        break;
+                    case 2:
+                        order = TestsOrder.ByTitle;
+                        break;
+                    default:
+                        return NotFound(new
+                        {
+                            Error = $"Sorting parameter has wrong value: {sorting}"
+                        });
+                }
+
+                var tests = await _repository.GetTestsByParam(size ?? _defaultQuerySize, order);
+
+                return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
             }
-
-            var tests = await _repository.GetTestsByParam(size ?? _defaultQuerySize, order);
-
-            return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         /// <summary>
@@ -203,9 +244,16 @@ namespace TestCreator.WebApp.Controllers
         [HttpGet("Search/{num:int?}")]
         public async Task<IActionResult> Search([FromQuery]string text, int num = 10)
         {
-            var tests = await _repository.Search(text, num);
+            try
+            {
+                var tests = await _repository.Search(text, num);
 
-            return new JsonResult(tests, JsonSettings);
+                return new JsonResult(tests, JsonSettings);
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
 
@@ -218,9 +266,16 @@ namespace TestCreator.WebApp.Controllers
         [ExactQueryParam("keyword")]
         public async Task<IActionResult> GetByKeyword([FromQuery] string keyword)
         {
-            var tests = await _repository.Search(keyword, _defaultQuerySize);
+            try
+            {
+                var tests = await _repository.Search(keyword, _defaultQuerySize);
 
-            return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
+                return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
     }
 }
