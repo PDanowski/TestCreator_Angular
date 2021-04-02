@@ -25,4 +25,5 @@ jobs:
     - name: Build
       run: dotnet build TestCreator\TestCreator.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test TestCreator\TestCreator.sln --no-restore --verbosity normal
+      run: dotnet test TestCreator\TestCreator.sln --no-build --no-restore --verbosity normal
+      
