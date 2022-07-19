@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { FormGroup, FormControl, FormBuilder, Validators } from "@angular/forms";
+import { Validators, FormGroup, FormBuilder } from "@angular/forms";
 import { Result } from 'src/app/interfaces/result';
 
 @Component({
