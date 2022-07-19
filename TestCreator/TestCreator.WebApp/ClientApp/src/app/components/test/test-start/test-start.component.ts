@@ -1,8 +1,8 @@
 import { Component, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { AuthService } from '../../services/auth.service';
-import { TestResultService } from '../../services/test.result.service';
+import { AuthService } from '../../../services/auth.service';
+import { TestResultService } from '../../../services/test.result.service';
 import { faArrowRight, faArrowLeft, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { TestAttempt } from 'src/app/interfaces/test.attempt';
 import { TestAttemptEntry } from 'src/app/interfaces/test.attempt.entry';
