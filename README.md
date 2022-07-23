@@ -1,5 +1,5 @@
 # TestCreator
-Test creator web app (.NET 6/ASP.NET Core and Angular 10) 
+Test creator web app (.NET 6/ASP.NET Core and Angular 14) 
 
 Used languages, technologies and frameworks
 
@@ -14,7 +14,8 @@ Backend:
     
 Frontend:
     
-    Angular 10
+    Angular 14
+    RxJS
     Bootstrap 4 (+ Bootswatch)
     LESS
     Font-Awesome
