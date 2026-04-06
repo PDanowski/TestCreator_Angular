@@ -1,29 +1,28 @@
-name: .NET
+name: Backend .NET CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, main ]
 
 jobs:
-  build:
-
-    runs-on: windows-latest
+  build-test:
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v4
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
-    - name: Clean
-      run: dotnet clean TestCreator\TestCreator.sln --configuration Release && dotnet nuget locals all --clear
+        dotnet-version: 10.0.x
+
     - name: Restore dependencies
-      run: dotnet restore
-      working-directory: TestCreator
+      run: dotnet restore ./TestCreator/TestCreator.sln
+
     - name: Build
-      run: dotnet build TestCreator\TestCreator.sln --configuration Release --no-restore
+      run: dotnet build ./TestCreator/TestCreator.sln --configuration Release --no-restore
+
     - name: Test
-      run: dotnet test TestCreator\TestCreator.sln --configuration Release --no-restore --verbosity normal
+      run: dotnet test ./TestCreator/TestCreator.sln --configuration Release --no-build --verbosity normal
       

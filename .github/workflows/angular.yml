@@ -1,0 +1,39 @@
+name: Frontend Angular CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./TestCreator/TestCreator.WebApp/ClientApp
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: npm
+        cache-dependency-path: ./TestCreator/TestCreator.WebApp/ClientApp/package-lock.json
+
+    - name: Setup Chrome
+      id: setup-chrome
+      uses: browser-actions/setup-chrome@v1
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+
+    - name: Test
+      run: npm run test -- --watch=false --browsers=ChromeHeadless
+      env:
+        CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
