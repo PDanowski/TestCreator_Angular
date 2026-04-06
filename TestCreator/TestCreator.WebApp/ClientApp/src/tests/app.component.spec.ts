@@ -24,8 +24,9 @@ describe('AppComponent', () => {
 });
 
 @Component({
-  selector: 'app-nav-menu',
-  template: ''
+    selector: 'app-nav-menu',
+    template: '',
+    standalone: false
 })
 class MockNavComponent {
 }

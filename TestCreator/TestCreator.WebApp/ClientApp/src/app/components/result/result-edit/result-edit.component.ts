@@ -5,9 +5,10 @@ import { Validators, FormGroup, FormBuilder } from "@angular/forms";
 import { Result } from 'src/app/interfaces/result';
 
 @Component({
-  selector: "result-edit",
-  templateUrl: './result-edit.component.html',
-  styleUrls: ['./result-edit.component.css']
+    selector: "result-edit",
+    templateUrl: './result-edit.component.html',
+    styleUrls: ['./result-edit.component.css'],
+    standalone: false
 })
 
 export class ResultEditComponent {

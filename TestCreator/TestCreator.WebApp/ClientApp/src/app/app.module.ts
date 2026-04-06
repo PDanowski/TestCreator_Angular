@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { TestResultService } from './services/test.result.service';
@@ -31,71 +31,65 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/user/register.component';
 import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-    TestListComponent,
-    TestComponent,
-    TestStartComponent,
-    TestResultComponent,
-    TestEditComponent,
-    TestSearchComponent,
-    TestSearchResultComponent,
-    QuestionListComponent,
-    QuestionEditComponent,
-    AnswerListComponent,
-    AnswerEditComponent,
-    ResultListComponent,
-    ResultEditComponent,
-    AboutComponent,
-    LoginComponent,
-    RegisterComponent,
-    PageNotFoundComponent
-  ],
-  imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    FontAwesomeModule ,
-    RouterModule.forRoot([
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
-    { path: 'test/create', component: TestEditComponent },
-    { path: 'test/:id', component: TestComponent },
-    { path: 'test/start/:id', component: TestStartComponent },
-    { path: 'test/result/:testId', component: TestResultComponent },
-    { path: 'test/edit/:id', component: TestEditComponent },
-    { path: 'test/search/:text', component: TestSearchResultComponent },
-    { path: 'question/edit/:id', component: QuestionEditComponent },
-    { path: 'question/create/:id', component: QuestionEditComponent },
-    { path: 'answer/edit/:id', component: AnswerEditComponent },
-    { path: 'answer/create/:id', component: AnswerEditComponent },
-    { path: 'result/edit/:id', component: ResultEditComponent },
-    { path: 'result/create/:id', component: ResultEditComponent },
-    { path: 'about', component: AboutComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
-    { path: '**', component: PageNotFoundComponent }
-], { relativeLinkResolution: 'legacy' })
-  ],
-  providers: [
-    TestResultService,
-    AuthService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthResponseInterceptor,
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        NavMenuComponent,
+        HomeComponent,
+        TestListComponent,
+        TestComponent,
+        TestStartComponent,
+        TestResultComponent,
+        TestEditComponent,
+        TestSearchComponent,
+        TestSearchResultComponent,
+        QuestionListComponent,
+        QuestionEditComponent,
+        AnswerListComponent,
+        AnswerEditComponent,
+        ResultListComponent,
+        ResultEditComponent,
+        AboutComponent,
+        LoginComponent,
+        RegisterComponent,
+        PageNotFoundComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FontAwesomeModule,
+        RouterModule.forRoot([
+            { path: '', redirectTo: 'home', pathMatch: 'full' },
+            { path: 'home', component: HomeComponent },
+            { path: 'test/create', component: TestEditComponent },
+            { path: 'test/:id', component: TestComponent },
+            { path: 'test/start/:id', component: TestStartComponent },
+            { path: 'test/result/:testId', component: TestResultComponent },
+            { path: 'test/edit/:id', component: TestEditComponent },
+            { path: 'test/search/:text', component: TestSearchResultComponent },
+            { path: 'question/edit/:id', component: QuestionEditComponent },
+            { path: 'question/create/:id', component: QuestionEditComponent },
+            { path: 'answer/edit/:id', component: AnswerEditComponent },
+            { path: 'answer/create/:id', component: AnswerEditComponent },
+            { path: 'result/edit/:id', component: ResultEditComponent },
+            { path: 'result/create/:id', component: ResultEditComponent },
+            { path: 'about', component: AboutComponent },
+            { path: 'login', component: LoginComponent },
+            { path: 'register', component: RegisterComponent },
+            { path: '**', component: PageNotFoundComponent }
+        ])], providers: [
+        TestResultService,
+        AuthService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthResponseInterceptor,
+            multi: true
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
 }

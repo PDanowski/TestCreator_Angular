@@ -5,9 +5,10 @@ import { Validators, FormGroup, FormBuilder } from "@angular/forms";
 import { Test } from 'src/app/interfaces/test';
 
 @Component({
-  selector: "test-edit",
-  templateUrl: './test-edit.component.html',
-  styleUrls: ['./test-edit.component.css']
+    selector: "test-edit",
+    templateUrl: './test-edit.component.html',
+    styleUrls: ['./test-edit.component.css'],
+    standalone: false
 })
 
 export class TestEditComponent {

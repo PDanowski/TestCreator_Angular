@@ -6,9 +6,10 @@ import { Result } from 'src/app/interfaces/result';
 import { Test } from 'src/app/interfaces/test';
 
 @Component({
-  selector: "result-list",
-  templateUrl: './result-list.component.html',
-  styleUrls: ['./result-list.component.css']
+    selector: "result-list",
+    templateUrl: './result-list.component.html',
+    styleUrls: ['./result-list.component.css'],
+    standalone: false
 })
 
 export class ResultListComponent {

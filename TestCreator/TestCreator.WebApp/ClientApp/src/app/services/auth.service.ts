@@ -52,7 +52,7 @@ export class AuthService {
   }
 
   setAuth(auth: TokenResponse | null) : boolean {
-    if (isPlatformBrowser) {
+    if (isPlatformBrowser(this.platformId)) {
       if (auth) {
         localStorage.setItem(this.authKey, JSON.stringify(auth));
       } else {

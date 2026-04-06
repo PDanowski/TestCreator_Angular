@@ -7,8 +7,9 @@ import { Test } from 'src/app/interfaces/test';
 @Component({
     selector: "test-search-result",
     templateUrl: './test-search-result.component.html',
-    styleUrls: ['./test-search-result.component.css']
-  }
+    styleUrls: ['./test-search-result.component.css'],
+    standalone: false
+}
 )
 
 export class TestSearchResultComponent {

@@ -5,9 +5,10 @@ import { HttpClient } from "@angular/common/http";
 import { User } from 'src/app/interfaces/user';
 
 @Component({
-  selector: "register",
-  templateUrl: "./register.component.html",
-  styleUrls: ['./register.component.css']
+    selector: "register",
+    templateUrl: "./register.component.html",
+    styleUrls: ['./register.component.css'],
+    standalone: false
 })
 
 export class RegisterComponent {

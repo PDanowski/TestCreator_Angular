@@ -3,9 +3,10 @@ import { Router } from "@angular/router";
 import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: "test-search",
-  templateUrl: "./test-search.component.html",
-  styleUrls: ['./test-search.component.css']
+    selector: "test-search",
+    templateUrl: "./test-search.component.html",
+    styleUrls: ['./test-search.component.css'],
+    standalone: false
 })
 
 export class TestSearchComponent {

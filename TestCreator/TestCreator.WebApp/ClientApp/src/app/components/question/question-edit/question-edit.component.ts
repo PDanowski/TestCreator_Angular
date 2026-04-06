@@ -5,9 +5,10 @@ import { Validators, FormBuilder, FormGroup } from "@angular/forms";
 import { Question } from 'src/app/interfaces/question';
 
 @Component({
-  selector: "question-edit",
-  templateUrl: './question-edit.component.html',
-  styleUrls: ['./question-edit.component.css']
+    selector: "question-edit",
+    templateUrl: './question-edit.component.html',
+    styleUrls: ['./question-edit.component.css'],
+    standalone: false
 })
 
 export class QuestionEditComponent {

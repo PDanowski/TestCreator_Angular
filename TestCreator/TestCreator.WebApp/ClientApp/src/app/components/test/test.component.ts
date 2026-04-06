@@ -6,9 +6,10 @@ import { faAlignJustify, faChartBar, faShare, faPlay, faHome } from '@fortawesom
 import { Test } from 'src/app/interfaces/test';
 
 @Component({
-  selector: "test",
-  templateUrl: "./test.component.html",
-  styleUrls: ['./test.component.css']
+    selector: "test",
+    templateUrl: "./test.component.html",
+    styleUrls: ['./test.component.css'],
+    standalone: false
 })
 
 export class TestComponent {

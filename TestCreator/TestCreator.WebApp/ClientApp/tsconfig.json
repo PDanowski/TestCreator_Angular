@@ -3,20 +3,19 @@
   "compilerOptions": {
     "baseUrl": "./",
     "downlevelIteration": true,
+    "strict": false,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
     "importHelpers": true,
     "module": "es2020",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "experimentalDecorators": true,
-    "target": "es2020",
+    "target": "es2022",
     "typeRoots": [
       "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
     ]
   }
 }

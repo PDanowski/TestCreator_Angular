@@ -14,7 +14,7 @@ describe('TestResultService', () => {
       providers: [TestResultService, { provide: 'BASE_URL', useValue: 'test' }]
     });
 
-    testResultService = TestBed.get(TestResultService); 
+    testResultService = TestBed.inject(TestResultService); 
   });
 
   it('should be created', () => {

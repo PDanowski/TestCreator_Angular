@@ -11,12 +11,14 @@
   </div>
   <div class="card-body">
     <ul class="list-group">
-      <li class="list-group-item" *ngFor="let test of tests"
+      @for (test of tests; track test) {
+        <li class="list-group-item"
           [class.selected]="test === selectedTest"
           (click)="onSelect(test)">
-        <img src="https://picsum.photos/id/{{test.Id}}/50/50/" alt="{{test.Title}}" class="rounded-circle"/>
-        <span>{{test.Title}}</span>
-      </li>
+          <img src="https://picsum.photos/id/{{test.Id}}/50/50/" alt="{{test.Title}}" class="rounded-circle"/>
+          <span>{{test.Title}}</span>
+        </li>
+      }
     </ul>
   </div>
 </div>

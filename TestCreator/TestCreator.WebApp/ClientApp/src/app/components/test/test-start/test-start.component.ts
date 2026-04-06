@@ -9,9 +9,10 @@ import { TestAttemptEntry } from 'src/app/interfaces/test.attempt.entry';
 import { TestAttemptResult } from 'src/app/interfaces/test.attempt.result';
 
 @Component({
-  selector: "test-start",
-  templateUrl: "./test-start.component.html",
-  styleUrls: ['./test-start.component.css']
+    selector: "test-start",
+    templateUrl: "./test-start.component.html",
+    styleUrls: ['./test-start.component.css'],
+    standalone: false
 })
 
 export class TestStartComponent {

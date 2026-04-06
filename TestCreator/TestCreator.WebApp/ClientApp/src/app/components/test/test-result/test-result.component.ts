@@ -7,9 +7,10 @@ import { faRedo } from '@fortawesome/free-solid-svg-icons';
 import { TestAttemptResult } from 'src/app/interfaces/test.attempt.result';
 
 @Component({
-  selector: "test-result",
-  templateUrl: "./test-result.component.html",
-  styleUrls: ['./test-result.component.css']
+    selector: "test-result",
+    templateUrl: "./test-result.component.html",
+    styleUrls: ['./test-result.component.css'],
+    standalone: false
 })
 
 

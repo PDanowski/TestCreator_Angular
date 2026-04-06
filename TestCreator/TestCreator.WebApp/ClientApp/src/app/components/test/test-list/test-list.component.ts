@@ -6,9 +6,10 @@ import { Test } from 'src/app/interfaces/test';
 import * as signalR from '@microsoft/signalr';  
 
 @Component({
-  selector: "test-list",
-  templateUrl: './test-list.component.html',
-  styleUrls: ['./test-list.component.css']
+    selector: "test-list",
+    templateUrl: './test-list.component.html',
+    styleUrls: ['./test-list.component.css'],
+    standalone: false
 }
 )
 

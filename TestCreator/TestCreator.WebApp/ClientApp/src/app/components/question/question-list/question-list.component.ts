@@ -6,9 +6,10 @@ import { Question } from 'src/app/interfaces/question';
 import { Test } from 'src/app/interfaces/test';
 
 @Component({
-  selector: "question-list",
-  templateUrl: './question-list.component.html',
-  styleUrls: ['./question-list.component.css']
+    selector: "question-list",
+    templateUrl: './question-list.component.html',
+    styleUrls: ['./question-list.component.css'],
+    standalone: false
 })
 
 export class QuestionListComponent {
