@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -8,6 +7,7 @@ using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
 using TestCreator.WebApp.Controllers;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers
@@ -16,6 +16,7 @@ namespace TestCreator.Tests.Controllers
     public class UserControllerTests
     {
         private Mock<IUserAndRoleRepository> _mockRepo;
+        private IAppMapper _mapper;
 
         private UserController _sut;
 
@@ -23,7 +24,8 @@ namespace TestCreator.Tests.Controllers
         public void OneTimeSetUp()
         {
             _mockRepo = new Mock<IUserAndRoleRepository>();
-            _sut = new UserController(_mockRepo.Object);
+            _mapper = new AppMapper();
+            _sut = new UserController(_mockRepo.Object, _mapper);
         }
 
         [Test]
@@ -43,7 +45,7 @@ namespace TestCreator.Tests.Controllers
             _mockRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult((ApplicationUser)null));
 
-            var result = _sut.Post(applicationUser.Adapt<UserViewModel>()).Result as JsonResult;
+            var result = _sut.Post(_mapper.ToViewModel(applicationUser)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             var viewModel = result.GetObjectFromJsonResult<UserViewModel>();

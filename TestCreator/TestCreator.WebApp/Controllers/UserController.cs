@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Constants;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.WebApp.Controllers
@@ -12,10 +12,12 @@ namespace TestCreator.WebApp.Controllers
     public class UserController : BaseApiController
     {
         private readonly IUserAndRoleRepository _userAndRoleRepository;
+        private readonly IAppMapper _mapper;
 
-        public UserController(IUserAndRoleRepository userAndRoleRepository)
+        public UserController(IUserAndRoleRepository userAndRoleRepository, IAppMapper mapper)
         {
             _userAndRoleRepository = userAndRoleRepository;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -45,10 +47,10 @@ namespace TestCreator.WebApp.Controllers
                 }
 
                 var createdUser = await _userAndRoleRepository.CreateUserAndAddToRolesAsync(
-                    viewModel.Adapt<ApplicationUser>(),
+                    _mapper.ToModel(viewModel),
                     new[] {UserRoles.RegisteredUser});
 
-                return Json(createdUser.Adapt<UserViewModel>(), JsonSettings);
+                return Json(_mapper.ToViewModel(createdUser), JsonSettings);
             }
             catch (Exception e)
             {

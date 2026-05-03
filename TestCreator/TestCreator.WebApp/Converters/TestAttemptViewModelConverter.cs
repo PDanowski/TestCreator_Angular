@@ -1,13 +1,20 @@
-﻿using System.Collections.Generic;
-using Mapster;
+using System.Collections.Generic;
 using TestCreator.Data.Models;
 using TestCreator.WebApp.Converters.Interfaces;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.WebApp.Converters
 {
     public class TestAttemptViewModelConverter : ITestAttemptViewModelConverter
     {
+        private readonly IAppMapper _mapper;
+
+        public TestAttemptViewModelConverter(IAppMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         public TestAttemptViewModel Convert(Test test)
         {
             if (test == null)
@@ -26,8 +33,8 @@ namespace TestCreator.WebApp.Converters
             {
                 viewModel.TestAttemptEntries.Add(new TestAttemptEntryViewModel
                 {
-                    Question = question.Adapt<QuestionViewModel>(),
-                    Answers = question.Answers.Adapt<List<TestAttemptAnswerViewModel>>()
+                    Question = _mapper.ToViewModel(question),
+                    Answers = _mapper.ToAttemptAnswerViewModels(question.Answers)
                 });
             }
 

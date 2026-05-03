@@ -17,6 +17,7 @@ using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.Broadcast;
 using TestCreator.WebApp.Converters;
 using TestCreator.WebApp.Converters.Interfaces;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.Services;
 using TestCreator.WebApp.Services.Interfaces;
 
@@ -86,6 +87,7 @@ namespace TestCreator.WebApp
             services.AddSignalR();
 
             //register dependencies
+            services.Add(new ServiceDescriptor(typeof(IAppMapper), typeof(AppMapper), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITestAttemptViewModelConverter), typeof(TestAttemptViewModelConverter), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITokenService), typeof(TokenService), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(ITestCalculationService), typeof(TestCalculationService), ServiceLifetime.Scoped));

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -12,6 +11,7 @@ using TestCreator.Data.Repositories.Params;
 using TestCreator.WebApp.Broadcast;
 using TestCreator.WebApp.Broadcast.Interfaces;
 using TestCreator.WebApp.Controllers.Attributes;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.WebApp.Controllers
@@ -20,14 +20,16 @@ namespace TestCreator.WebApp.Controllers
     {
         private readonly ITestRepository _repository;
         private readonly IHubContext<TestsHub, ITestsHubClient> _hubContext;
+        private readonly IAppMapper _mapper;
 
 
         private int _defaultQuerySize = 10;
 
-        public TestController(ITestRepository testRepository, IHubContext<TestsHub, ITestsHubClient> hubContext)
+        public TestController(ITestRepository testRepository, IHubContext<TestsHub, ITestsHubClient> hubContext, IAppMapper mapper)
         {
             this._repository = testRepository;
             _hubContext = hubContext;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                var testViewModel = test.Adapt<TestViewModel>();
+                var testViewModel = _mapper.ToViewModel(test);
                 testViewModel.UserCanEdit =
                     test.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
 
@@ -83,7 +85,7 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var updatedTest = await _repository.UpdateTest(viewModel.Adapt<Test>());
+                var updatedTest = await _repository.UpdateTest(_mapper.ToModel(viewModel));
 
                 if (updatedTest == null)
                 {
@@ -93,7 +95,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                var updatedTestViewModel = updatedTest.Adapt<TestViewModel>();
+                var updatedTestViewModel = _mapper.ToViewModel(updatedTest);
                 updatedTestViewModel.UserCanEdit =
                     updatedTest.UserId == User.FindFirst(ClaimTypes.NameIdentifier)?.Value || User.IsInRole("Admin");
 
@@ -120,12 +122,12 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var testModel = viewModel.Adapt<Test>();
+                var testModel = _mapper.ToModel(viewModel);
                 testModel.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                var createdTest = await _repository.CreateTest(viewModel.Adapt<Test>());
+                var createdTest = await _repository.CreateTest(testModel);
 
-                var createdTestViewModel = createdTest.Adapt<TestViewModel>();
+                var createdTestViewModel = _mapper.ToViewModel(createdTest);
                 createdTestViewModel.UserCanEdit = true;
 
                 await _hubContext.Clients.All.TestCreated();
@@ -227,7 +229,7 @@ namespace TestCreator.WebApp.Controllers
 
                 var tests = await _repository.GetTestsByParam(size ?? _defaultQuerySize, order);
 
-                return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModels(tests), JsonSettings);
             }
             catch (Exception e)
             {
@@ -270,7 +272,7 @@ namespace TestCreator.WebApp.Controllers
             {
                 var tests = await _repository.Search(keyword, _defaultQuerySize);
 
-                return new JsonResult(tests.Adapt<List<TestViewModel>>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModels(tests), JsonSettings);
             }
             catch (Exception e)
             {

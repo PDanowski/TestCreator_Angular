@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -10,6 +9,7 @@ using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
 using TestCreator.WebApp.Controllers;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers
@@ -18,6 +18,7 @@ namespace TestCreator.Tests.Controllers
     public class ResultControllerTests
     {
         private Mock<IResultRepository> _mockRepo;
+        private IAppMapper _mapper;
 
         private ResultController _sut;
 
@@ -25,7 +26,8 @@ namespace TestCreator.Tests.Controllers
         public void OneTimeSetUp()
         {
             _mockRepo = new Mock<IResultRepository>();
-            _sut = new ResultController(_mockRepo.Object);
+            _mapper = new AppMapper();
+            _sut = new ResultController(_mockRepo.Object, _mapper);
         }
 
         [Test]
@@ -119,7 +121,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.CreateResult(It.Is<Result>(r => r.Id == resultId))).Returns(Task.FromResult(resultModel));
 
-            var result = _sut.Post(resultModel.Adapt<ResultViewModel>()).Result as JsonResult;
+            var result = _sut.Post(_mapper.ToViewModel(resultModel)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             var viewModel = result.GetObjectFromJsonResult<ResultViewModel>();
@@ -148,7 +150,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.CreateResult(It.Is<Result>(r => r.Id == resultId))).Throws(new Exception());
 
-            var result = _sut.Post(resultModel.Adapt<ResultViewModel>()).Result as StatusCodeResult;
+            var result = _sut.Post(_mapper.ToViewModel(resultModel)).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -166,7 +168,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.UpdateResult(It.Is<Result>(r => r.Id == resultId))).Returns(Task.FromResult(resultModel));
 
-            var result = _sut.Put(resultModel.Adapt<ResultViewModel>()).Result as JsonResult;
+            var result = _sut.Put(_mapper.ToViewModel(resultModel)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetObjectFromJsonResult<ResultViewModel>().Text, resultModel.Text);
@@ -185,7 +187,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.UpdateResult(It.Is<Result>(r => r.Id == resultId))).Throws(new Exception());
 
-            var result = _sut.Put(resultModel.Adapt<ResultViewModel>()).Result as StatusCodeResult;
+            var result = _sut.Put(_mapper.ToViewModel(resultModel)).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -209,7 +211,7 @@ namespace TestCreator.Tests.Controllers
                 Text = "Text1"
             };
 
-            _mockRepo.Setup(x => x.UpdateResult(viewModel.Adapt<Result>())).Returns<ResultViewModel>(null);
+            _mockRepo.Setup(x => x.UpdateResult(It.IsAny<Result>())).Returns(Task.FromResult((Result)null));
 
             var result = _sut.Put(viewModel).Result;
 

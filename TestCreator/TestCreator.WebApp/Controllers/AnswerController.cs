@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,10 +16,12 @@ namespace TestCreator.WebApp.Controllers
     public class AnswerController : BaseApiController
     {
         private readonly IAnswerRepository _repository;
+        private readonly IAppMapper _mapper;
 
-        public AnswerController(IAnswerRepository repository)
+        public AnswerController(IAnswerRepository repository, IAppMapper mapper)
         {
             this._repository = repository;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                return new JsonResult(answers.Adapt<List<AnswerViewModel>>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModels(answers), JsonSettings);
             }
             catch (Exception e)
             {
@@ -69,7 +71,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                return new JsonResult(answer.Adapt<AnswerViewModel>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModel(answer), JsonSettings);
             }
             catch (Exception e)
             {
@@ -92,7 +94,7 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var updatedAnswer = await _repository.UpdateAnswer(viewModel.Adapt<Answer>());
+                var updatedAnswer = await _repository.UpdateAnswer(_mapper.ToModel(viewModel));
                 if (updatedAnswer == null)
                 {
                     return NotFound(new
@@ -100,7 +102,7 @@ namespace TestCreator.WebApp.Controllers
                         Error = $"Error during updating answer with identifier {viewModel.Id}"
                     });
                 }
-                return new JsonResult(updatedAnswer.Adapt<AnswerViewModel>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModel(updatedAnswer), JsonSettings);
             }
             catch (Exception e)
             {
@@ -123,8 +125,8 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var createdAnswer = await _repository.CreateAnswer(viewModel.Adapt<Answer>());
-                return new JsonResult(createdAnswer.Adapt<AnswerViewModel>(), JsonSettings);
+                var createdAnswer = await _repository.CreateAnswer(_mapper.ToModel(viewModel));
+                return new JsonResult(_mapper.ToViewModel(createdAnswer), JsonSettings);
             }
             catch (Exception e)
             {

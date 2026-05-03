@@ -9,6 +9,7 @@ using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
 using TestCreator.WebApp.Controllers;
 using TestCreator.WebApp.Converters;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.Services.Interfaces;
 using TestCreator.WebApp.ViewModels;
 
@@ -27,7 +28,7 @@ namespace TestCreator.Tests.Controllers
         {
             _mockRepo = new Mock<ITestRepository>();
             _mockService = new Mock<ITestCalculationService>();
-            _sut = new TestAttemptController(_mockService.Object, _mockRepo.Object, new TestAttemptViewModelConverter());
+            _sut = new TestAttemptController(_mockService.Object, _mockRepo.Object, new TestAttemptViewModelConverter(new AppMapper()));
         }
 
         [Test]
