@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,10 +16,12 @@ namespace TestCreator.WebApp.Controllers
     public class ResultController : BaseApiController
     {
         private readonly IResultRepository _repository;
+        private readonly IAppMapper _mapper;
 
-        public ResultController(IResultRepository repository)
+        public ResultController(IResultRepository repository, IAppMapper mapper)
         {
             this._repository = repository;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                return new JsonResult(result.Adapt<ResultViewModel>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModel(result), JsonSettings);
             }
             catch (Exception e)
             {
@@ -65,7 +67,7 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var updatedResult = await _repository.UpdateResult(viewModel.Adapt<Result>());
+                var updatedResult = await _repository.UpdateResult(_mapper.ToModel(viewModel));
                 if (updatedResult == null)
                 {
                     return NotFound(new
@@ -73,7 +75,7 @@ namespace TestCreator.WebApp.Controllers
                         Error = $"Error during updating result with identifier {viewModel.Id}"
                     });
                 }
-                return new JsonResult(updatedResult.Adapt<ResultViewModel>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModel(updatedResult), JsonSettings);
             }
             catch (Exception e)
             {
@@ -96,8 +98,8 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var createdResult = await _repository.CreateResult(viewModel.Adapt<Result>());
-                return new JsonResult(createdResult.Adapt<ResultViewModel>(), JsonSettings);
+                var createdResult = await _repository.CreateResult(_mapper.ToModel(viewModel));
+                return new JsonResult(_mapper.ToViewModel(createdResult), JsonSettings);
             }
             catch (Exception e)
             {
@@ -150,7 +152,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                return new JsonResult(results.Adapt<List<ResultViewModel>>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModels(results), JsonSettings);
             }
             catch (Exception e)
             {

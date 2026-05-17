@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.WebApp.Converters.Interfaces;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,10 +17,12 @@ namespace TestCreator.WebApp.Controllers
     public class QuestionController : BaseApiController
     {
         private readonly IQuestionRepository _repository;
+        private readonly IAppMapper _mapper;
 
-        public QuestionController(IQuestionRepository repository)
+        public QuestionController(IQuestionRepository repository, IAppMapper mapper)
         {
             this._repository = repository;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
                 
-                return new JsonResult(question.Adapt<QuestionViewModel>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModel(question), JsonSettings);
             }
             catch (Exception e)
             {
@@ -66,7 +68,7 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var updatedQuestion = await _repository.UpdateQuestion(viewModel.Adapt<Question>());
+                var updatedQuestion = await _repository.UpdateQuestion(_mapper.ToModel(viewModel));
                 if (updatedQuestion == null)
                 {
                     return NotFound(new
@@ -74,7 +76,7 @@ namespace TestCreator.WebApp.Controllers
                         Error = $"Error during updating question with identifier {viewModel.Id}"
                     });
                 }
-                return new JsonResult(updatedQuestion.Adapt<QuestionViewModel>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModel(updatedQuestion), JsonSettings);
             }
             catch (Exception e)
             {
@@ -97,8 +99,8 @@ namespace TestCreator.WebApp.Controllers
 
             try
             {
-                var createdQuestion = await _repository.CreateQuestion(viewModel.Adapt<Question>());
-                return new JsonResult(createdQuestion.Adapt<QuestionViewModel>(), JsonSettings);
+                var createdQuestion = await _repository.CreateQuestion(_mapper.ToModel(viewModel));
+                return new JsonResult(_mapper.ToViewModel(createdQuestion), JsonSettings);
             }
             catch (Exception e)
             {
@@ -151,7 +153,7 @@ namespace TestCreator.WebApp.Controllers
                     });
                 }
 
-                return new JsonResult(questions.Adapt<List<QuestionViewModel>>(), JsonSettings);
+                return new JsonResult(_mapper.ToViewModels(questions), JsonSettings);
             }
             catch (Exception e)
             {

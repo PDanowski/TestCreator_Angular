@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -13,6 +12,7 @@ using TestCreator.Tests.Helpers;
 using TestCreator.WebApp.Broadcast;
 using TestCreator.WebApp.Broadcast.Interfaces;
 using TestCreator.WebApp.Controllers;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers
@@ -22,6 +22,7 @@ namespace TestCreator.Tests.Controllers
     {
         private Mock<ITestRepository> _mockRepo;
         private Mock<IHubContext<TestsHub, ITestsHubClient>> _mockHub;
+        private IAppMapper _mapper;
 
         private TestController _sut;
 
@@ -32,14 +33,15 @@ namespace TestCreator.Tests.Controllers
         {
             _mockRepo = new Mock<ITestRepository>();
             _mockHub = new Mock<IHubContext<TestsHub, ITestsHubClient>>();
-            _sut = new TestController(_mockRepo.Object, _mockHub.Object);
+            _mapper = new AppMapper();
+            _sut = new TestController(_mockRepo.Object, _mockHub.Object, _mapper);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, _username)
             }, "mock"));
 
-            _sut = new TestController(_mockRepo.Object, _mockHub.Object)
+            _sut = new TestController(_mockRepo.Object, _mockHub.Object, _mapper)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -115,7 +117,7 @@ namespace TestCreator.Tests.Controllers
             _mockRepo.Setup(x => x.CreateTest(It.Is<Test>(t => t.Id == testId))).Returns(Task.FromResult(test));
             _mockHub.Setup(x => x.Clients.All.TestCreated()).Returns(Task.CompletedTask);
 
-            var result = _sut.Post(test.Adapt<TestViewModel>()).Result as JsonResult;
+            var result = _sut.Post(_mapper.ToViewModel(test)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
@@ -143,7 +145,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.CreateTest(It.Is<Test>(t => t.Id == testId))).Throws(new Exception());
 
-            var result = _sut.Post(test.Adapt<TestViewModel>()).Result as StatusCodeResult;
+            var result = _sut.Post(_mapper.ToViewModel(test)).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -163,7 +165,7 @@ namespace TestCreator.Tests.Controllers
             _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
             _mockRepo.Setup(x => x.UpdateTest(It.Is<Test>(t => t.Id == testId))).Returns(Task.FromResult(test));
 
-            var result = _sut.Put(test.Adapt<TestViewModel>()).Result as JsonResult;
+            var result = _sut.Put(_mapper.ToViewModel(test)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
@@ -184,7 +186,7 @@ namespace TestCreator.Tests.Controllers
             _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
             _mockRepo.Setup(x => x.UpdateTest(It.Is<Test>(t => t.Id == testId))).Throws(new Exception());
 
-            var result = _sut.Put(test.Adapt<TestViewModel>()).Result as StatusCodeResult;
+            var result = _sut.Put(_mapper.ToViewModel(test)).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -212,7 +214,7 @@ namespace TestCreator.Tests.Controllers
             _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
             _mockRepo.Setup(x => x.UpdateTest(test)).Returns<TestViewModel>(null);
 
-            var result = _sut.Put(test.Adapt<TestViewModel>()).Result;
+            var result = _sut.Put(_mapper.ToViewModel(test)).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
@@ -230,7 +232,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.GetTest(test.Id)).Returns(Task.FromResult(test));
 
-            var result = _sut.Put(test.Adapt<TestViewModel>()).Result;
+            var result = _sut.Put(_mapper.ToViewModel(test)).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<UnauthorizedResult>(result);
@@ -256,7 +258,7 @@ namespace TestCreator.Tests.Controllers
                 new Claim(ClaimTypes.Role, "Admin"),
             }, "mock"));
 
-            var controller = new TestController(_mockRepo.Object, _mockHub.Object)
+            var controller = new TestController(_mockRepo.Object, _mockHub.Object, _mapper)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -264,7 +266,7 @@ namespace TestCreator.Tests.Controllers
                 }
             };
 
-            var result = controller.Put(test.Adapt<TestViewModel>()).Result as JsonResult;
+            var result = controller.Put(_mapper.ToViewModel(test)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.GetValueFromJsonResult<string>("Title"), test.Title);
@@ -352,7 +354,7 @@ namespace TestCreator.Tests.Controllers
                 new Claim(ClaimTypes.Role, "Admin"), 
             }, "mock"));
 
-            var controller = new TestController(_mockRepo.Object, _mockHub.Object)
+            var controller = new TestController(_mockRepo.Object, _mockHub.Object, _mapper)
             {
                 ControllerContext = new ControllerContext
                 {

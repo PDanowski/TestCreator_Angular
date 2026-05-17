@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -10,6 +9,7 @@ using TestCreator.Data.Models;
 using TestCreator.Data.Repositories.Interfaces;
 using TestCreator.Tests.Helpers;
 using TestCreator.WebApp.Controllers;
+using TestCreator.WebApp.Mappers;
 using TestCreator.WebApp.ViewModels;
 
 namespace TestCreator.Tests.Controllers
@@ -18,6 +18,7 @@ namespace TestCreator.Tests.Controllers
     public class AnswerControllerTests
     {
         private Mock<IAnswerRepository> _mockRepo;
+        private IAppMapper _mapper;
 
         private AnswerController _sut;
 
@@ -25,7 +26,8 @@ namespace TestCreator.Tests.Controllers
         public void OneTimeSetUp()
         {
             _mockRepo = new Mock<IAnswerRepository>();
-            _sut =  new AnswerController(_mockRepo.Object);
+            _mapper = new AppMapper();
+            _sut =  new AnswerController(_mockRepo.Object, _mapper);
         }
 
         [Test]
@@ -117,7 +119,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.CreateAnswer(It.IsAny<Answer>())).Returns(Task.FromResult(answer));
 
-            var result = _sut.Post(answer.Adapt<AnswerViewModel>()).Result as JsonResult;
+            var result = _sut.Post(_mapper.ToViewModel(answer)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             var viewModel = result.GetObjectFromJsonResult<AnswerViewModel>();
@@ -136,7 +138,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.CreateAnswer(It.IsAny<Answer>())).Throws(new Exception());
 
-            var result = _sut.Post(answer.Adapt<AnswerViewModel>()).Result as StatusCodeResult;
+            var result = _sut.Post(_mapper.ToViewModel(answer)).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -163,7 +165,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Returns(Task.FromResult(answer));
 
-            var result = _sut.Put(answer.Adapt<AnswerViewModel>()).Result as JsonResult;
+            var result = _sut.Put(_mapper.ToViewModel(answer)).Result as JsonResult;
 
             Assert.IsNotNull(result);
             var viewModel = result.GetObjectFromJsonResult<AnswerViewModel>();
@@ -183,7 +185,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Throws(new Exception());
 
-            var result = _sut.Put(answer.Adapt<AnswerViewModel>()).Result as StatusCodeResult;
+            var result = _sut.Put(_mapper.ToViewModel(answer)).Result as StatusCodeResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.StatusCode, 500);
@@ -210,7 +212,7 @@ namespace TestCreator.Tests.Controllers
 
             _mockRepo.Setup(x => x.UpdateAnswer(It.Is<Answer>(a => a.Id == answerId))).Returns(Task.FromResult((Answer)null));
 
-            var result = _sut.Put(answer.Adapt<AnswerViewModel>()).Result;
+            var result = _sut.Put(_mapper.ToViewModel(answer)).Result;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
